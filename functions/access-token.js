@@ -1,28 +1,56 @@
-const crypto = require("crypto");
+const fetch = require("isomorphic-fetch");
+const {
+  REACT_APP_GITHUB_OAUTH_APP_CLIENT_ID,
+  GITHUB_OAUTH_APP_CLIENT_SECRET,
+} = process.env;
 
-const { CLIENT_ID, CLIENT_SECRET } = process.env;
+exports.handler = (event, _1, callback) => {
+  const method = event.httpMethod;
+  if (method.toUpperCase() !== "POST") {
+    return callback(null, {
+      statusCode: 405,
+      body: JSON.stringify({ message: "method not allowed" }),
+    });
+  }
 
-exports.handler = (event, contect, callback) => {
-  const { code, state } = event.queryStringParameters;
+  let body;
+  try {
+    body = JSON.parse(event.body);
+  } catch (error) {
+    return callback(null, {
+      statusCode: 400,
+      body: JSON.stringify({ message: "invalid request body" }),
+    });
+  }
+
+  const { code } = body;
   if (code) {
-    const state = crypto.randomBytes(128).toString("hex");
-
     fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
-      body: JSON.stringify({
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        code,
-        redurect_uri: "http://localhost:8080/login/callback",
-        state,
-      }),
-      header: {
+      headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
+      body: JSON.stringify({
+        client_id: REACT_APP_GITHUB_OAUTH_APP_CLIENT_ID,
+        client_secret: GITHUB_OAUTH_APP_CLIENT_SECRET,
+        code,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
-        callback(data);
+        callback(null, {
+          statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: JSON.stringify(data),
+        });
       });
+  } else {
+    return callback(null, {
+      statusCode: 400,
+      body: JSON.stringify({ message: "invalid parameters" }),
+    });
   }
 };

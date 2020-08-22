@@ -8,10 +8,12 @@
     "@testing-library/user-event": "^7.1.2",
     "@types/jest": "^24.0.0",
     "@types/node": "^12.0.0",
+    "@types/qs": "^6.9.4",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "dayjs": "^1.8.34",
     "parse-link-header": "^1.0.1",
+    "qs": "^6.9.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -19,6 +21,7 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
+    "start:lambda": "set -a && source .env && set +a && netlify-lambda serve functions -c webpack.netlify-lambda.conf.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -41,6 +44,8 @@
   },
   "devDependencies": {
     "@types/parse-link-header": "^1.0.0",
-    "@types/react-router-dom": "^5.1.5"
+    "@types/react-router-dom": "^5.1.5",
+    "isomorphic-fetch": "^2.2.1",
+    "netlify-lambda": "^2.0.1"
   }
 }

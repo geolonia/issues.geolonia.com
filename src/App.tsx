@@ -1,17 +1,20 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
-import { useRepositories } from "./hooks/use-github";
+import { useRepositories, useAccessToken } from "./hooks/use-github";
 
 import Issues from "./issues";
 import Callback from "./callback";
 
-const GITHUB_OAUTH_ENDPOINT =
-  "https://github.com/login/oauth/authorize?client_id=99dfd3a5a943f81d22ba&scope=repo";
-
 function App() {
-  const [code, setCode] = React.useState("");
-  const { loading, repositories } = useRepositories("geolonia");
+  const {
+    accessToken,
+    requestAccessToken,
+    githubOAuthEndpoint,
+    logout,
+  } = useAccessToken();
+
+  const { loading, repositories } = useRepositories("geolonia", accessToken);
 
   const activeRepositories = repositories.filter(
     (repository) => !repository.isArchived
@@ -23,21 +26,28 @@ function App() {
         <h1 className="app-name">
           <Link to="/">@geolonia/ops</Link>
         </h1>
-        <a className="button" href={GITHUB_OAUTH_ENDPOINT}>
-          GitHubでログイン
-        </a>
+        {!!accessToken ? (
+          <Link className="button" to="/" onClick={logout}>
+            {"logout"}
+          </Link>
+        ) : (
+          <a className="button" href={githubOAuthEndpoint}>
+            GitHubでログイン
+          </a>
+        )}
       </header>
 
       <div className="container">
         <section className="sidebar">
           <ul className="repositories">
             {activeRepositories.map((repository) => {
-              const { name, openIssuesCount } = repository;
+              const { name, openIssuesCount, isPrivate } = repository;
               return (
-                <li key={name}>
+                <li key={name} className="repo-item">
                   <Link
                     to={`/repos/${name}`}
                   >{`${name} (${openIssuesCount})`}</Link>
+                  {isPrivate && <span className="private-label">private</span>}
                 </li>
               );
             })}
@@ -46,14 +56,22 @@ function App() {
 
         <section className="body">
           <Switch>
-            <Route path="/repos/:name">
-              <Issues org="geolonia" type="repo"></Issues>
+            <Route exact path="/repos/:name">
+              <Issues
+                org="geolonia"
+                type="repo"
+                accessToken={accessToken}
+              ></Issues>
             </Route>
-            <Route path="/labels/:name">
-              <Issues org="geolonia" type="label"></Issues>
+            <Route exact path="/labels/:name">
+              <Issues
+                org="geolonia"
+                type="label"
+                accessToken={accessToken}
+              ></Issues>
             </Route>
-            <Route path="/login/callback">
-              <Callback setCode={setCode}></Callback>
+            <Route exact path="/login/callback">
+              <Callback requestAccessToken={requestAccessToken}></Callback>
             </Route>
           </Switch>
         </section>

@@ -6,7 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Link } from "react-router-dom";
 dayjs.extend(relativeTime);
 
-type OwnProps = { org: string; type: "repo" | "label" };
+type OwnProps = { org: string; type: "repo" | "label"; accessToken: string };
 type Props = OwnProps;
 
 const blackOrWhite = (hexcolor: string) => {
@@ -22,8 +22,9 @@ const blackOrWhite = (hexcolor: string) => {
 };
 
 export default function Issues(props: Props) {
+  const { org, type, accessToken } = props;
   const { name } = useParams<{ name: string }>();
-  const { loading, issues, htmlUrl } = useIssues(props.org, name, props.type);
+  const { loading, issues, htmlUrl } = useIssues(org, name, accessToken, type);
 
   return (
     <div className="issues">

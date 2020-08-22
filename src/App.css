@@ -99,3 +99,18 @@ ul.repositories li:not(:first-child) {
 .label-item a {
   color: inherit;
 }
+
+.repo-item {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.private-label {
+  color: #666666;
+  border: 1px solid #999999;
+  padding: 1px 5px;
+  border-radius: 5px;
+  margin: 5px;
+}

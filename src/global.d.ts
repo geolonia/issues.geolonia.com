@@ -18,3 +18,10 @@ declare namespace Geolonia {
   };
   type Label = { name: string; color: string };
 }
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    readonly NODE_ENV: string;
+    readonly REACT_APP_GITHUB_OAUTH_APP_CLIENT_ID: string;
+  }
+}
