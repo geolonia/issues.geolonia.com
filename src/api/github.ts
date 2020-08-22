@@ -89,28 +89,31 @@ export const listIssues = async (
       };
 
   const requestResult = await githubPagenation(url, headers);
-  const data = requestResult.map(
-    ({
-      html_url: htmlUrl,
-      id,
-      title,
-      labels,
-      state,
-      body,
-      number,
-      updated_at: updatedAt,
-    }) =>
-      (({
-        htmlUrl,
+
+  const data = requestResult
+    .filter((x) => x.message !== "Not Found")
+    .map(
+      ({
+        html_url: htmlUrl,
         id,
         title,
         labels,
         state,
         body,
         number,
-        updatedAt,
-      } as unknown) as Geolonia.Issue)
-  );
+        updated_at: updatedAt,
+      }) =>
+        (({
+          htmlUrl,
+          id,
+          title,
+          labels,
+          state,
+          body,
+          number,
+          updatedAt,
+        } as unknown) as Geolonia.Issue)
+    );
   return { data, htmlUrl };
 };
 
@@ -139,27 +142,29 @@ export const listLabeledIssues = async (
     (result: any) => result.items
   );
 
-  const data = requestResult.map(
-    ({
-      html_url: htmlUrl,
-      id,
-      title,
-      labels,
-      state,
-      body,
-      number,
-      updated_at: updatedAt,
-    }) =>
-      (({
-        htmlUrl,
+  const data = requestResult
+    .filter((x) => x.message !== "Not Found")
+    .map(
+      ({
+        html_url: htmlUrl,
         id,
         title,
         labels,
         state,
         body,
         number,
-        updatedAt,
-      } as unknown) as Geolonia.Issue)
-  );
+        updated_at: updatedAt,
+      }) =>
+        (({
+          htmlUrl,
+          id,
+          title,
+          labels,
+          state,
+          body,
+          number,
+          updatedAt,
+        } as unknown) as Geolonia.Issue)
+    );
   return { data, htmlUrl };
 };
