@@ -28,7 +28,7 @@ export default function Issues(props: Props) {
   return (
     <div className="issues">
       <h3 className="repository-name">
-        <a href={htmlUrl}>{name}</a>
+        <a href={htmlUrl}>{decodeURIComponent(name)}</a>
       </h3>
       <hr style={{ width: "100%" }} />
       <ul className="issue-list">
@@ -52,7 +52,9 @@ export default function Issues(props: Props) {
                     color: blackOrWhite(`#${label.color}`),
                   }}
                 >
-                  <Link to={`/labels/${label.name}`}>{label.name}</Link>
+                  <Link to={`/labels/${encodeURIComponent(label.name)}`}>
+                    {label.name}
+                  </Link>
                 </li>
               ))}
             </ul>

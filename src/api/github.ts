@@ -62,7 +62,8 @@ export const listRepositories = async (organization: string) => {
 
 export const listIssues = async (organization: string, reponame: string) => {
   const path = `repos/${organization}/${reponame}/issues`;
-  let url: string = `${apiEndpoint}/${path}`;
+  const url = `${apiEndpoint}/${path}`;
+  const htmlUrl = `${htmlEndpoint}/${organization}/${reponame}`;
 
   const headers = {
     Accept: "application/vnd.github.v3+json",
@@ -92,13 +93,13 @@ export const listIssues = async (organization: string, reponame: string) => {
         updatedAt,
       } as unknown) as Geolonia.Issue)
   );
-  return { data, htmlUrl: `${htmlEndpoint}/${path}` };
+  return { data, htmlUrl };
 };
 
 export const listLabeledIssues = async (organization: string, name: string) => {
   const query = `org:${organization}+label:"${name}"+is:open`;
   const path = `search/issues?q=${query}`;
-  let url: string = `${apiEndpoint}/${path}`;
+  const url = `${apiEndpoint}/${path}`;
   const htmlUrl = `${htmlEndpoint}/search?q=${query + "+type:issue"}`;
 
   const headers = {
