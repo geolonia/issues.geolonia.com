@@ -1,0 +1,97 @@
+a {
+  text-decoration: none;
+  color: #337ab7;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e74230;
+}
+
+.header .button {
+  color: white;
+  margin-right: 10px;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 1.5em;
+  padding: 0.3em;
+}
+.app-name a {
+  color: white;
+  text-decoration: none;
+}
+
+.container {
+  display: flex;
+}
+
+ul.repositories {
+  list-style: none;
+  margin: 15px;
+  padding: 0;
+  border: 1px solid #eeeeee;
+  width: 350px;
+}
+
+ul.repositories li {
+  font-size: 0.8em;
+  padding: 10px 20px;
+}
+ul.repositories li:not(:first-child) {
+  border-top: 1px solid #eeeeee;
+}
+
+.body {
+  width: 100%;
+  padding: 15px;
+}
+
+.issues {
+  width: 100%;
+  font-size: 0.8em;
+}
+
+.repository-name {
+  font-size: 1.5em;
+}
+
+.issue-list {
+  margin: 0;
+  padding: 0;
+  margin-top: 30px;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.issue-item {
+  width: 350px;
+  margin: 15px;
+  padding: 10px;
+  border: 1px solid #eeeeee;
+}
+
+.issue-title {
+  margin: 0 0 10px;
+}
+
+.label-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.label-item {
+  display: inline-block;
+  padding: 2px 5px 1px;
+  margin: 1px;
+}
