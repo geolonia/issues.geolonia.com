@@ -42,7 +42,7 @@ export default function Issues(props: Props) {
                 <a
                   href={`https://github.com/${props.org}/${name}/issues/${issue.number}`}
                 >
-                  {issue.title}
+                  {`${issue.title} #${issue.number}`}
                 </a>
               </h4>
               <p>{dayjs(issue.updatedAt).fromNow()}</p>
