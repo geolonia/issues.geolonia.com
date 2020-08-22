@@ -23,7 +23,7 @@
   "scripts": {
     "start:lambda": "set -a && source .env && set +a && netlify-lambda serve functions -c webpack.netlify-lambda.conf.js",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && netlify-lambda build functions",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
