@@ -32,36 +32,40 @@ export default function Issues(props: Props) {
         <a href={htmlUrl}>{decodeURIComponent(name)}</a>
       </h3>
       <hr style={{ width: "100%" }} />
-      <ul className="issue-list">
-        {issues.map((issue) => (
-          <li className="issue-item" key={issue.id}>
-            <h4 className="issue-title">
-              <a
-                href={`https://github.com/${props.org}/${name}/issues/${issue.number}`}
-              >
-                {issue.title}
-              </a>
-            </h4>
-            <p>{dayjs(issue.updatedAt).fromNow()}</p>
-            <ul className="label-list">
-              {issue.labels.map((label) => (
-                <li
-                  className="label-item"
-                  key={label.name}
-                  style={{
-                    background: `#${label.color}`,
-                    color: blackOrWhite(`#${label.color}`),
-                  }}
+      {loading ? (
+        <span>loading..</span>
+      ) : (
+        <ul className="issue-list">
+          {issues.map((issue) => (
+            <li className="issue-item" key={issue.id}>
+              <h4 className="issue-title">
+                <a
+                  href={`https://github.com/${props.org}/${name}/issues/${issue.number}`}
                 >
-                  <Link to={`/labels/${encodeURIComponent(label.name)}`}>
-                    {label.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+                  {issue.title}
+                </a>
+              </h4>
+              <p>{dayjs(issue.updatedAt).fromNow()}</p>
+              <ul className="label-list">
+                {issue.labels.map((label) => (
+                  <li
+                    className="label-item"
+                    key={label.name}
+                    style={{
+                      background: `#${label.color}`,
+                      color: blackOrWhite(`#${label.color}`),
+                    }}
+                  >
+                    <Link to={`/labels/${encodeURIComponent(label.name)}`}>
+                      {label.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -39,19 +39,25 @@ function App() {
 
       <div className="container">
         <section className="sidebar">
-          <ul className="repositories">
-            {activeRepositories.map((repository) => {
-              const { name, openIssuesCount, isPrivate } = repository;
-              return (
-                <li key={name} className="repo-item">
-                  <Link
-                    to={`/repos/${name}`}
-                  >{`${name} (${openIssuesCount})`}</Link>
-                  {isPrivate && <span className="private-label">private</span>}
-                </li>
-              );
-            })}
-          </ul>
+          {loading ? (
+            <span>loading...</span>
+          ) : (
+            <ul className="repositories">
+              {activeRepositories.map((repository) => {
+                const { name, openIssuesCount, isPrivate } = repository;
+                return (
+                  <li key={name} className="repo-item">
+                    <Link
+                      to={`/repos/${name}`}
+                    >{`${name} (${openIssuesCount})`}</Link>
+                    {isPrivate && (
+                      <span className="private-label">private</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </section>
 
         <section className="body">
