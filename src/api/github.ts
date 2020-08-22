@@ -1,9 +1,11 @@
 import parseLinkHeader from "parse-link-header";
-const endpoint = "https://api.github.com";
+const apiEndpoint = "https://api.github.com";
+const htmlEndpoint = "https://github.com";
 
 const githubPagenation = async function (
   initialUrl: string,
-  headers: { [key: string]: string } = {}
+  headers: { [key: string]: string } = {},
+  process: Function = (x: any) => x
 ) {
   let url: string | null = initialUrl;
   const result: any[] = [];
@@ -21,7 +23,8 @@ const githubPagenation = async function (
       }
       return res.json().then((data) => ({ data: data, nextUrl }));
     })) as { data: any; nextUrl: string };
-    result.push(data);
+    console.log(initialUrl, data, process(data));
+    result.push(process(data));
 
     url = nextUrl;
   } while (url);
@@ -30,7 +33,7 @@ const githubPagenation = async function (
 };
 
 export const listRepositories = async (organization: string) => {
-  let url: string = `${endpoint}/orgs/${organization}/repos`;
+  let url: string = `${apiEndpoint}/orgs/${organization}/repos`;
 
   const headers = {
     Accept: "application/vnd.github.v3+json",
@@ -58,16 +61,16 @@ export const listRepositories = async (organization: string) => {
 };
 
 export const listIssues = async (organization: string, reponame: string) => {
-  let url: string = `${endpoint}/repos/${organization}/${reponame}/issues`;
+  const path = `repos/${organization}/${reponame}/issues`;
+  let url: string = `${apiEndpoint}/${path}`;
 
   const headers = {
     Accept: "application/vnd.github.v3+json",
     // Authorization: `bearer ${accessToken}`,
   };
 
-  const data = await githubPagenation(url, headers);
-  console.log(data);
-  return data.map(
+  const requestResult = await githubPagenation(url, headers);
+  const data = requestResult.map(
     ({
       html_url: htmlUrl,
       id,
@@ -89,4 +92,47 @@ export const listIssues = async (organization: string, reponame: string) => {
         updatedAt,
       } as unknown) as Geolonia.Issue)
   );
+  return { data, htmlUrl: `${htmlEndpoint}/${path}` };
+};
+
+export const listLabeledIssues = async (organization: string, name: string) => {
+  const query = `org:${organization}+label:"${name}"+is:open`;
+  const path = `search/issues?q=${query}`;
+  let url: string = `${apiEndpoint}/${path}`;
+  const htmlUrl = `${htmlEndpoint}/search?q=${query + "+type:issue"}`;
+
+  const headers = {
+    Accept: "application/vnd.github.v3+json",
+    // Authorization: `bearer ${accessToken}`,
+  };
+
+  const requestResult = await githubPagenation(
+    url,
+    headers,
+    (result: any) => result.items
+  );
+
+  const data = requestResult.map(
+    ({
+      html_url: htmlUrl,
+      id,
+      title,
+      labels,
+      state,
+      body,
+      number,
+      updated_at: updatedAt,
+    }) =>
+      (({
+        htmlUrl,
+        id,
+        title,
+        labels,
+        state,
+        body,
+        number,
+        updatedAt,
+      } as unknown) as Geolonia.Issue)
+  );
+  return { data, htmlUrl };
 };

@@ -95,3 +95,7 @@ ul.repositories li:not(:first-child) {
   padding: 2px 5px 1px;
   margin: 1px;
 }
+
+.label-item a {
+  color: inherit;
+}

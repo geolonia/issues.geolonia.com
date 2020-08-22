@@ -47,7 +47,10 @@ function App() {
         <section className="body">
           <Switch>
             <Route path="/repos/:name">
-              <Issues org="geolonia"></Issues>
+              <Issues org="geolonia" type="repo"></Issues>
+            </Route>
+            <Route path="/labels/:name">
+              <Issues org="geolonia" type="label"></Issues>
             </Route>
             <Route path="/login/callback">
               <Callback setCode={setCode}></Callback>

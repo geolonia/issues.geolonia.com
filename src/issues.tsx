@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import { useIssues } from "./hooks/use-github";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Link } from "react-router-dom";
 dayjs.extend(relativeTime);
 
-type OwnProps = { org: string };
+type OwnProps = { org: string; type: "repo" | "label" };
 type Props = OwnProps;
 
 const blackOrWhite = (hexcolor: string) => {
@@ -22,12 +23,12 @@ const blackOrWhite = (hexcolor: string) => {
 
 export default function Issues(props: Props) {
   const { name } = useParams<{ name: string }>();
-  const { loading, issues } = useIssues(props.org, name);
+  const { loading, issues, htmlUrl } = useIssues(props.org, name, props.type);
 
   return (
     <div className="issues">
       <h3 className="repository-name">
-        <a href={`https://github.com/${props.org}/${name}`}>{name}</a>
+        <a href={htmlUrl}>{name}</a>
       </h3>
       <hr style={{ width: "100%" }} />
       <ul className="issue-list">
@@ -51,7 +52,7 @@ export default function Issues(props: Props) {
                     color: blackOrWhite(`#${label.color}`),
                   }}
                 >
-                  {label.name}
+                  <Link to={`/labels/${label.name}`}>{label.name}</Link>
                 </li>
               ))}
             </ul>
