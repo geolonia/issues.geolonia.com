@@ -27,7 +27,7 @@ https://geolonia-ops.netlify.app/
    $ vi .env
    ```
 
-4. バックエンドを起動
+4. GitHub での OAuth を提供するバックエンドを起動
 
    ```shell
    $ npm run start:lambda

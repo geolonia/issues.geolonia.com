@@ -84,6 +84,19 @@ function App() {
           </Switch>
         </section>
       </div>
+
+      <footer className="footer">
+        <ul className="footer-menu">
+          <li>
+            <a href="https://github.com/geolonia">Geolonia on GitHub</a>
+          </li>
+          <li>
+            <a href="https://github.com/geolonia/ops">
+              @geolonia/ops on GitHub
+            </a>
+          </li>
+        </ul>
+      </footer>
     </Router>
   );
 }
