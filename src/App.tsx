@@ -6,6 +6,8 @@ import { useRepositories, useAccessToken } from "./hooks/use-github";
 import Issues from "./issues";
 import Callback from "./callback";
 
+const ORGANIZATION_NAME = "geolonia";
+
 function App() {
   const {
     accessToken,
@@ -14,11 +16,19 @@ function App() {
     logout,
   } = useAccessToken();
 
-  const { loading, repositories } = useRepositories("geolonia", accessToken);
+  const { loading, repositories } = useRepositories(
+    ORGANIZATION_NAME,
+    accessToken
+  );
 
   const activeRepositories = repositories
     .filter((repository) => !repository.isArchived)
     .sort((repo1, repo2) => repo2.openIssuesCount - repo1.openIssuesCount);
+
+  const totalIssuesCount = activeRepositories.reduce(
+    (sum, repo) => sum + repo.openIssuesCount,
+    0
+  );
 
   return (
     <Router>
@@ -45,19 +55,28 @@ function App() {
             </div>
           ) : (
             <ul className="repositories">
-              {activeRepositories.map((repository) => {
-                const { name, openIssuesCount, isPrivate } = repository;
-                return (
-                  <li key={name} className="repo-item">
-                    <Link className="repo-link" to={`/repos/${name}`}>
-                      {`${name} (${openIssuesCount})`}
-                      {isPrivate && (
-                        <span className="private-label">private</span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
+              {activeRepositories.length === 0 ? (
+                <li className="repo-item repo-item-head">
+                  {"No unarchived repositories seem to exist."}
+                </li>
+              ) : (
+                <>
+                  <li className="repo-item repo-item-head">{`total (${totalIssuesCount})`}</li>
+                  {activeRepositories.map((repository) => {
+                    const { name, openIssuesCount, isPrivate } = repository;
+                    return (
+                      <li key={name} className="repo-item">
+                        <Link className="repo-link" to={`/repos/${name}`}>
+                          {`${name} (${openIssuesCount})`}
+                          {isPrivate && (
+                            <span className="private-label">private</span>
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </>
+              )}
             </ul>
           )}
         </section>
@@ -66,14 +85,14 @@ function App() {
           <Switch>
             <Route exact path="/repos/:name">
               <Issues
-                org="geolonia"
+                org={ORGANIZATION_NAME}
                 type="repo"
                 accessToken={accessToken}
               ></Issues>
             </Route>
             <Route exact path="/labels/:name">
               <Issues
-                org="geolonia"
+                org={ORGANIZATION_NAME}
                 type="label"
                 accessToken={accessToken}
               ></Issues>
@@ -88,7 +107,9 @@ function App() {
       <footer className="footer">
         <ul className="footer-menu">
           <li>
-            <a href="https://github.com/geolonia">Geolonia on GitHub</a>
+            <a
+              href={`https://github.com/${ORGANIZATION_NAME}`}
+            >{`${ORGANIZATION_NAME}} on GitHub`}</a>
           </li>
           <li>
             <a href="https://github.com/geolonia/ops">

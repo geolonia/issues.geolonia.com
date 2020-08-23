@@ -44,7 +44,7 @@ a:hover {
 .repositories li {
   font-size: 0.8em;
 }
-.repositories li:hover {
+.repositories li:hover:not(.repo-item-head) {
   background-color: #eeeeee;
 }
 .repositories li:not(:first-child) {
@@ -55,13 +55,17 @@ a:hover {
   padding: 0;
 }
 
-a.repo-link {
+a.repo-link,
+.repo-item-head {
   padding: 10px 20px;
   height: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   text-decoration: none;
+}
+.repo-item-head {
+  font-weight: bold;
 }
 
 .private-label {

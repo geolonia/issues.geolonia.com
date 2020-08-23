@@ -33,7 +33,7 @@ function Issue(props: Props) {
   );
 
   return (
-    <li className="issue-item" key={issue.id}>
+    <li className="issue-item">
       <h4 className="issue-title">
         {issue.type === "issue" ? (
           <IssueIcon

@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useIssues } from "./hooks/use-github";
 import Issue from "./issue";
+import NoIssue from "./no-issue";
 
 type Props = { org: string; type: "repo" | "label"; accessToken: string };
 
@@ -20,15 +21,19 @@ function Issues(props: Props) {
         <span>loading..</span>
       ) : (
         <ul className="issue-list">
-          {issues.map((issue) => (
-            <Issue
-              key={issue.id}
-              data={issue}
-              org={org}
-              repo={name}
-              accessToken={accessToken}
-            />
-          ))}
+          {issues.length === 0 ? (
+            <NoIssue />
+          ) : (
+            issues.map((issue) => (
+              <Issue
+                key={issue.id}
+                data={issue}
+                org={org}
+                repo={name}
+                accessToken={accessToken}
+              />
+            ))
+          )}
         </ul>
       )}
     </div>
