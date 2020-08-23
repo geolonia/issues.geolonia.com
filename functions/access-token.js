@@ -24,7 +24,7 @@ exports.handler = (event, _1, callback) => {
   if (!allowedOrigins.includes(origin)) {
     return callback(null, {
       statusCode: 403,
-      body: JSON.stringify({ message: "invalid request" }),
+      body: JSON.stringify({ message: `invalid origin: ${origin}.` }),
     });
   }
 
