@@ -56,6 +56,8 @@ const githubResourceMapping = {
       return { ...commonProps, type: "issue" } as Geolonia.Issue;
     }
   },
+
+  pull: ({ draft }: any) => ({ isDraft: draft } as { isDraft: boolean }),
 };
 
 const githubPagenation = async function (
@@ -124,4 +126,16 @@ export const listLabeledIssues = async (
     .filter((x) => x.message !== "Not Found")
     .map(githubResourceMapping.issue);
   return { data, htmlUrl };
+};
+
+export const describePull = (
+  org: string,
+  name: string,
+  num: number,
+  token: string
+) => {
+  const url = `${apiEndpoint}/repos/${org}/${name}/pulls/${num}`;
+  return fetch(url, { headers: getHeader(token) as any })
+    .then((res) => res.json())
+    .then(githubResourceMapping.pull);
 };

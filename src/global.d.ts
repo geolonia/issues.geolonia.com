@@ -15,7 +15,7 @@ declare namespace Geolonia {
     state: "open" | "close";
     body: string;
     updatedAt: string;
-    number: string;
+    number: number;
     type: "issue";
   };
 
@@ -27,7 +27,7 @@ declare namespace Geolonia {
     state: "open" | "close";
     body: string;
     updatedAt: string;
-    number: string;
+    number: number;
     type: "pull";
   };
   type Label = { name: string; color: string };

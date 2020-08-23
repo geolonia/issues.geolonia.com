@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { listIssues, listLabeledIssues, listRepositories } from "../api/github";
+import {
+  listIssues,
+  listLabeledIssues,
+  listRepositories,
+  describePull,
+} from "../api/github";
 
 export const useRepositories = (org: string, accessToken: string) => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +23,7 @@ export const useRepositories = (org: string, accessToken: string) => {
 export const useIssues = (
   org: string,
   name: string,
-  accessToken: string,
+  token: string,
   type: "repo" | "label"
 ) => {
   const [loading, setLoading] = useState(false);
@@ -29,17 +34,40 @@ export const useIssues = (
     setLoading(true);
     const promise =
       type === "repo"
-        ? listIssues(org, name, accessToken)
-        : listLabeledIssues(org, name, accessToken);
+        ? listIssues(org, name, token)
+        : listLabeledIssues(org, name, token);
 
     promise.then(({ data, htmlUrl }) => {
       setIssues(data);
       setLoading(false);
       setHtmlUrl(htmlUrl);
     });
-  }, [org, name, type, accessToken]);
+  }, [org, name, type, token]);
 
   return { loading, issues, htmlUrl };
+};
+
+export const usePull = (
+  org: string,
+  repo: string,
+  num: number,
+  isPull: boolean,
+  token: string
+) => {
+  const [isDraft, setIsDraft] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isPull) {
+      setLoading(true);
+      describePull(org, repo, num, token).then(({ isDraft }) => {
+        setIsDraft(isDraft);
+        setLoading(false);
+      });
+    }
+  }, [isPull, num, org, repo, token]);
+
+  return { isDraft, loading };
 };
 
 export const useAccessToken = () => {
