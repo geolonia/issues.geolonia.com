@@ -32,7 +32,7 @@ function App() {
           </Link>
         ) : (
           <a className="button" href={githubOAuthEndpoint}>
-            GitHubでログイン
+            Login with GitHub
           </a>
         )}
       </header>
@@ -40,7 +40,9 @@ function App() {
       <div className="container">
         <section className="sidebar">
           {loading ? (
-            <span>loading...</span>
+            <div className="repositories">
+              <span>loading...</span>
+            </div>
           ) : (
             <ul className="repositories">
               {activeRepositories.map((repository) => {
@@ -48,7 +50,7 @@ function App() {
                 return (
                   <li key={name} className="repo-item">
                     <Link className="repo-link" to={`/repos/${name}`}>
-                      {`${name} (${openIssuesCount})`}{" "}
+                      {`${name} (${openIssuesCount})`}
                       {isPrivate && (
                         <span className="private-label">private</span>
                       )}

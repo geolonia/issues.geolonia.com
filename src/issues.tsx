@@ -4,6 +4,11 @@ import { useIssues } from "./hooks/use-github";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Link } from "react-router-dom";
+// @ts-ignore
+import PullIcon from "react-ionicons/lib/MdGitPullRequest";
+// @ts-ignore
+import IssueIcon from "react-ionicons/lib/MdInformationCircle";
+
 dayjs.extend(relativeTime);
 
 type OwnProps = { org: string; type: "repo" | "label"; accessToken: string };
@@ -42,6 +47,19 @@ export default function Issues(props: Props) {
                 <a
                   href={`https://github.com/${props.org}/${name}/issues/${issue.number}`}
                 >
+                  {issue.type === "issue" ? (
+                    <IssueIcon
+                      fontSize={14}
+                      style={{ marginRight: 2 }}
+                      color={"gray"}
+                    ></IssueIcon>
+                  ) : (
+                    <PullIcon
+                      fontSize={14}
+                      style={{ marginRight: 2 }}
+                      color={"gray"}
+                    ></PullIcon>
+                  )}
                   {`${issue.title} #${issue.number}`}
                 </a>
               </h4>

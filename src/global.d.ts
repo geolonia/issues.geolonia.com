@@ -6,6 +6,7 @@ declare namespace Geolonia {
     isPrivate: string;
     openIssuesCount: number;
   };
+
   type Issue = {
     htmlUrl: string;
     id: number;
@@ -15,6 +16,19 @@ declare namespace Geolonia {
     body: string;
     updatedAt: string;
     number: string;
+    type: "issue";
+  };
+
+  type Pull = {
+    htmlUrl: string;
+    id: number;
+    title: string;
+    labels: Label[];
+    state: "open" | "close";
+    body: string;
+    updatedAt: string;
+    number: string;
+    type: "pull";
   };
   type Label = { name: string; color: string };
 }

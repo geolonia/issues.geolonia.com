@@ -22,7 +22,7 @@ export const useIssues = (
   type: "repo" | "label"
 ) => {
   const [loading, setLoading] = useState(false);
-  const [issues, setIssues] = useState<Geolonia.Issue[]>([]);
+  const [issues, setIssues] = useState<(Geolonia.Issue | Geolonia.Pull)[]>([]);
   const [htmlUrl, setHtmlUrl] = useState("");
 
   useEffect(() => {

@@ -33,7 +33,7 @@ a:hover {
   display: flex;
 }
 
-ul.repositories {
+.repositories {
   list-style: none;
   margin: 15px;
   padding: 0;
@@ -41,13 +41,13 @@ ul.repositories {
   width: 350px;
 }
 
-ul.repositories li {
+.repositories li {
   font-size: 0.8em;
 }
-ul.repositories li:hover {
+.repositories li:hover {
   background-color: #eeeeee;
 }
-ul.repositories li:not(:first-child) {
+.repositories li:not(:first-child) {
   border-top: 1px solid #eeeeee;
 }
 
