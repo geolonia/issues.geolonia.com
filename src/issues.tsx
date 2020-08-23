@@ -2,6 +2,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useIssues } from "./hooks/use-github";
 import Issue from "./issue";
+// @ts-ignore
+import ExternalIcon from "react-ionicons/lib/MdOpen";
 
 type Props = { org: string; type: "repo" | "label"; accessToken: string };
 
@@ -13,7 +15,14 @@ function Issues(props: Props) {
   return (
     <div className="issues">
       <h3 className="repository-name">
-        <a href={htmlUrl}>{decodeURIComponent(name)}</a>
+        <a href={htmlUrl}>
+          {decodeURIComponent(name)}
+          <ExternalIcon
+            fontSize={"16"}
+            style={{ marginLeft: 4, top: 2, position: "relative" }}
+            color={"gray"}
+          />
+        </a>
       </h3>
       <hr style={{ width: "100%" }} />
       {loading ? (

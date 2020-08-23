@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import PullIcon from "react-ionicons/lib/MdGitPullRequest";
 // @ts-ignore
 import IssueIcon from "react-ionicons/lib/MdInformationCircle";
+// @ts-ignore
+import ExternalIcon from "react-ionicons/lib/MdOpen";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -18,6 +20,11 @@ type Props = {
   org: string;
   repo: string;
   accessToken: string;
+};
+
+const iconStyle: React.CSSProperties = {
+  position: "relative",
+  top: 3,
 };
 
 function Issue(props: Props) {
@@ -38,19 +45,24 @@ function Issue(props: Props) {
         {issue.type === "issue" ? (
           <IssueIcon
             fontSize={"14"}
-            style={{ marginRight: 2 }}
+            style={{ marginRight: 2, ...iconStyle }}
             color={"gray"}
-          ></IssueIcon>
+          />
         ) : (
           <PullIcon
             fontSize={"14"}
-            style={{ marginRight: 2 }}
+            style={{ marginRight: 2, ...iconStyle }}
             color={"gray"}
-          ></PullIcon>
+          />
         )}
         {isDraft && <span className="draft-label">{"draft"}</span>}
         <a href={`https://github.com/${org}/${repo}/issues/${num}`}>
           {`${title} #${num}`}
+          <ExternalIcon
+            fontSize={"14"}
+            style={{ marginLeft: 2, ...iconStyle }}
+            color={"gray"}
+          />
         </a>
       </h4>
       <p>{dayjs(updatedAt).fromNow()}</p>
