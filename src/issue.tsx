@@ -35,21 +35,21 @@ function Issue(props: Props) {
   return (
     <li className="issue-item" key={issue.id}>
       <h4 className="issue-title">
+        {issue.type === "issue" ? (
+          <IssueIcon
+            fontSize={"14"}
+            style={{ marginRight: 2 }}
+            color={"gray"}
+          ></IssueIcon>
+        ) : (
+          <PullIcon
+            fontSize={"14"}
+            style={{ marginRight: 2 }}
+            color={"gray"}
+          ></PullIcon>
+        )}
+        {isDraft && <span className="draft-label">{"draft"}</span>}
         <a href={`https://github.com/${org}/${repo}/issues/${num}`}>
-          {issue.type === "issue" ? (
-            <IssueIcon
-              fontSize={"14"}
-              style={{ marginRight: 2 }}
-              color={"gray"}
-            ></IssueIcon>
-          ) : (
-            <PullIcon
-              fontSize={"14"}
-              style={{ marginRight: 2 }}
-              color={"gray"}
-            ></PullIcon>
-          )}
-          {isDraft && <span className="draft-label">{"draft"}</span>}
           {`${title} #${num}`}
         </a>
       </h4>
