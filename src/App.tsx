@@ -109,7 +109,7 @@ function App() {
           <li>
             <a
               href={`https://github.com/${ORGANIZATION_NAME}`}
-            >{`${ORGANIZATION_NAME}} on GitHub`}</a>
+            >{`${ORGANIZATION_NAME} on GitHub`}</a>
           </li>
           <li>
             <a href="https://github.com/geolonia/ops">
