@@ -6,7 +6,7 @@ const {
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://geolonia-ops.netlify.app/",
+  "https://geolonia-ops.netlify.app",
 ];
 
 exports.handler = (event, _1, callback) => {
@@ -24,7 +24,7 @@ exports.handler = (event, _1, callback) => {
   if (!allowedOrigins.includes(origin)) {
     return callback(null, {
       statusCode: 403,
-      body: JSON.stringify({ message: `invalid origin: ${origin}.` }),
+      body: JSON.stringify({ message: `invalid origin: "${origin}".` }),
     });
   }
 
