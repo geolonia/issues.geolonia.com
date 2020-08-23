@@ -2,7 +2,6 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useIssues } from "./hooks/use-github";
 import Issue from "./issue";
-import NoIssue from "./no-issue";
 
 type Props = { org: string; type: "repo" | "label"; accessToken: string };
 
@@ -19,12 +18,12 @@ function Issues(props: Props) {
       <hr style={{ width: "100%" }} />
       {loading ? (
         <span>loading..</span>
+      ) : issues.length === 0 ? (
+        <h4 className="issue-title">{"No issues found."}</h4>
       ) : (
-        <ul className="issue-list">
-          {issues.length === 0 ? (
-            <NoIssue />
-          ) : (
-            issues.map((issue) => (
+        <ul className={"issue-list"}>
+          {issues.map((issue) => {
+            return (
               <Issue
                 key={issue.id}
                 data={issue}
@@ -32,8 +31,8 @@ function Issues(props: Props) {
                 repo={name}
                 accessToken={accessToken}
               />
-            ))
-          )}
+            );
+          })}
         </ul>
       )}
     </div>
