@@ -11,8 +11,7 @@ import IssueIcon from "react-ionicons/lib/MdInformationCircle";
 
 dayjs.extend(relativeTime);
 
-type OwnProps = { org: string; type: "repo" | "label"; accessToken: string };
-type Props = OwnProps;
+type Props = { org: string; type: "repo" | "label"; accessToken: string };
 
 const blackOrWhite = (hexcolor: string) => {
   if (!hexcolor.startsWith("#")) {
@@ -26,7 +25,7 @@ const blackOrWhite = (hexcolor: string) => {
   return (r * 299 + g * 587 + b * 114) / 1000 < 128 ? "#FFFFFF" : "#000000";
 };
 
-export default function Issues(props: Props) {
+function Issues(props: Props) {
   const { org, type, accessToken } = props;
   const { name } = useParams<{ name: string }>();
   const { loading, issues, htmlUrl } = useIssues(org, name, accessToken, type);
@@ -87,3 +86,4 @@ export default function Issues(props: Props) {
     </div>
   );
 }
+export default Issues;

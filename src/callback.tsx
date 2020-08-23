@@ -2,13 +2,11 @@ import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import qs from "qs";
 
-type OwnProps = {
+type Props = {
   requestAccessToken: (code: string) => Promise<void>;
 };
-type RouterProps = {};
-type Props = OwnProps & RouterProps;
 
-const Callback = (props: Props) => {
+function Callback(props: Props) {
   const { requestAccessToken } = props;
   const location = useLocation();
   const history = useHistory();
@@ -22,6 +20,6 @@ const Callback = (props: Props) => {
     }
   }, [code, history, onceLoaded, requestAccessToken]);
   return null;
-};
+}
 
 export default Callback;
