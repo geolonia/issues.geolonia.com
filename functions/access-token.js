@@ -4,7 +4,13 @@ const {
   GITHUB_OAUTH_APP_CLIENT_SECRET,
 } = process.env;
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://geolonia-ops.netlify.app/",
+];
+
 exports.handler = (event, _1, callback) => {
+  // check method
   const method = event.httpMethod;
   if (method.toUpperCase() !== "POST") {
     return callback(null, {
@@ -13,6 +19,16 @@ exports.handler = (event, _1, callback) => {
     });
   }
 
+  // check header
+  const { origin } = event.headers;
+  if (!allowedOrigins.includes(origin)) {
+    return callback(null, {
+      statusCode: 403,
+      body: JSON.stringify({ message: "invalid request" }),
+    });
+  }
+
+  // check body
   let body;
   try {
     body = JSON.parse(event.body);
@@ -42,7 +58,7 @@ exports.handler = (event, _1, callback) => {
         callback(null, {
           statusCode: 200,
           headers: {
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": origin,
           },
           body: JSON.stringify(data),
         });
