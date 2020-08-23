@@ -40,7 +40,7 @@ function Issues(props: Props) {
           {type === "repo" && (
             <p>
               <a
-                href={`https://github.com/${org}/${name}`}
+                href={`https://github.com/${org}/${name}/issues/new`}
                 className="button new-issue"
               >
                 {"+ New Issue"}
