@@ -26,3 +26,6 @@ yarn-error.log*
 
 # netlify-lambda
 /lambda
+
+# perferer Yarn to lock
+package-lock.json

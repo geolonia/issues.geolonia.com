@@ -43,10 +43,33 @@ ul.repositories {
 
 ul.repositories li {
   font-size: 0.8em;
-  padding: 10px 20px;
+}
+ul.repositories li:hover {
+  background-color: #eeeeee;
 }
 ul.repositories li:not(:first-child) {
   border-top: 1px solid #eeeeee;
+}
+
+.repo-item {
+  padding: 0;
+}
+
+a.repo-link {
+  padding: 10px 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+}
+
+.private-label {
+  color: #666666;
+  border: 1px solid #999999;
+  padding: 1px 5px;
+  border-radius: 5px;
+  margin: 5px;
 }
 
 .body {
@@ -98,19 +121,4 @@ ul.repositories li:not(:first-child) {
 
 .label-item a {
   color: inherit;
-}
-
-.repo-item {
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.private-label {
-  color: #666666;
-  border: 1px solid #999999;
-  padding: 1px 5px;
-  border-radius: 5px;
-  margin: 5px;
 }

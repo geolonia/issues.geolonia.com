@@ -16,9 +16,9 @@ function App() {
 
   const { loading, repositories } = useRepositories("geolonia", accessToken);
 
-  const activeRepositories = repositories.filter(
-    (repository) => !repository.isArchived
-  );
+  const activeRepositories = repositories
+    .filter((repository) => !repository.isArchived)
+    .sort((repo1, repo2) => repo2.openIssuesCount - repo1.openIssuesCount);
 
   return (
     <Router>
@@ -47,12 +47,12 @@ function App() {
                 const { name, openIssuesCount, isPrivate } = repository;
                 return (
                   <li key={name} className="repo-item">
-                    <Link
-                      to={`/repos/${name}`}
-                    >{`${name} (${openIssuesCount})`}</Link>
-                    {isPrivate && (
-                      <span className="private-label">private</span>
-                    )}
+                    <Link className="repo-link" to={`/repos/${name}`}>
+                      {`${name} (${openIssuesCount})`}{" "}
+                      {isPrivate && (
+                        <span className="private-label">private</span>
+                      )}
+                    </Link>
                   </li>
                 );
               })}
