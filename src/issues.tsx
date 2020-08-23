@@ -18,22 +18,36 @@ function Issues(props: Props) {
       <hr style={{ width: "100%" }} />
       {loading ? (
         <span>loading..</span>
-      ) : issues.length === 0 ? (
-        <h4 className="issue-title">{"No issues found."}</h4>
       ) : (
-        <ul className={"issue-list"}>
-          {issues.map((issue) => {
-            return (
-              <Issue
-                key={issue.id}
-                data={issue}
-                org={org}
-                repo={name}
-                accessToken={accessToken}
-              />
-            );
-          })}
-        </ul>
+        <>
+          {issues.length === 0 ? (
+            <h4 className="issue-title">{"No issues found."}</h4>
+          ) : (
+            <ul className={"issue-list"}>
+              {issues.map((issue) => {
+                return (
+                  <Issue
+                    key={issue.id}
+                    data={issue}
+                    org={org}
+                    repo={name}
+                    accessToken={accessToken}
+                  />
+                );
+              })}
+            </ul>
+          )}
+          {type === "repo" && (
+            <p>
+              <a
+                href={`https://github.com/${org}/${name}`}
+                className="button new-issue"
+              >
+                {"+ New Issue"}
+              </a>
+            </p>
+          )}
+        </>
       )}
     </div>
   );

@@ -149,3 +149,8 @@ a.repo-link,
   text-align: right;
   list-style: none;
 }
+
+a.new-issue {
+  font-size: 1.2em;
+  margin: 15px;
+}
