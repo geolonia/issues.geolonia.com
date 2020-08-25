@@ -4,7 +4,7 @@ Geolonia 全体に関する issue や、特定のリポジトリに当てはめ�
 
 ## ダッシュボード
 
-Geolonia の Issue は以下のアプリで確認することができます。
+Geolonia の Issue は、github.com から確認する以外にも以下の web アプリでも確認することができます。
 
 https://geolonia-ops.netlify.app/
 
@@ -18,22 +18,21 @@ https://geolonia-ops.netlify.app/
    $ yarn
    ```
 
-1. 開発用の GitHub OAuth Apps を作成　https://github.com/settings/developers
-2. コールバック URL は `http://localhost:3000/login/callback` を指定する
-3. Client ID と Client Secret を確認して .env ファイル経由で環境変数を設定
+1. https://github.com/settings/developers にアクセスして開発用の GitHub OAuth Apps を作成。この時コールバック URL は `http://localhost:3000/login/callback` を指定する
+2. Client ID と Client Secret を確認して .env ファイル経由で環境変数を設定
 
    ```shell
    $ cp .env.sample .env
    $ vi .env
    ```
 
-4. GitHub での OAuth を提供するバックエンドを起動
+3. GitHub での OAuth を提供するバックエンドを起動
 
    ```shell
    $ npm run start:lambda
    ```
 
-5. React アプリを起動
+4. React 開発サーバーを起動
 
    ```shell
    $ npm start
