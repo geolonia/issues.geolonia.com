@@ -34,7 +34,7 @@ function App() {
     <Router>
       <header className="header">
         <h1 className="app-name">
-          <Link to="/">@geolonia/ops</Link>
+          <Link to="/">Geolonia Issues</Link>
         </h1>
         {!!accessToken ? (
           <Link className="button" to="/" onClick={logout}>

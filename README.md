@@ -6,7 +6,7 @@ Geolonia 全体に関する issue や、特定のリポジトリに当てはめ�
 
 Geolonia の Issue は、github.com から確認する以外にも以下の web アプリでも確認することができます。
 
-https://geolonia-ops.netlify.app/
+https://issues.geolonia.com
 
 ### 開発環境のセットアップ
 

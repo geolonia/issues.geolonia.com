@@ -7,6 +7,7 @@ const {
 const allowedOrigins = [
   "http://localhost:3000",
   "https://geolonia-ops.netlify.app",
+  "https://issues.geolonia.com",
 ];
 
 exports.handler = (event, _1, callback) => {
