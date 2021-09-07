@@ -17,6 +17,7 @@ function Issues(props: Props) {
       <h3 className="repository-name">
         <a href={htmlUrl}>
           {decodeURIComponent(name)}
+          {!loading && issues.length > 0 && <small>{`(${issues.length})`}</small>}
           <ExternalIcon
             fontSize={"16"}
             style={{ marginLeft: 4, top: 2, position: "relative" }}
