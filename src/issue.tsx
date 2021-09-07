@@ -39,6 +39,8 @@ function Issue(props: Props) {
     accessToken
   );
 
+    const repoIdentifier = issue.htmlUrl.split('/').slice(3, 5).join('/')
+
   return (
     <li className="issue-item">
       <h4 className="issue-title">
@@ -65,7 +67,7 @@ function Issue(props: Props) {
           />
         </a>
       </h4>
-      <p><small>{`${org}/${repo}`}</small></p>
+      <p><small>{repoIdentifier}</small></p>
       <p>{dayjs(updatedAt).fromNow()}</p>
       <ul className="label-list">
         {issue.labels.map((label) => (
