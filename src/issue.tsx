@@ -65,6 +65,7 @@ function Issue(props: Props) {
           />
         </a>
       </h4>
+      <p><small>{`${org}/${repo}`}</small></p>
       <p>{dayjs(updatedAt).fromNow()}</p>
       <ul className="label-list">
         {issue.labels.map((label) => (
