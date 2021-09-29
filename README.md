@@ -1,4 +1,4 @@
-# @geolonia/ops
+# @geolonia/issues.geolonia.com
 
 Geolonia 全体に関する issue や、特定のリポジトリに当てはめにくい issue を管理するためのリポジトリです。
 
@@ -13,8 +13,8 @@ https://issues.geolonia.com
 0. リポジトリのクローンとインストール
 
    ```shell
-   $ git clone git@github.com:geolonia/ops.git
-   $ cd ops
+   $ git clone git@github.com:geolonia/issues.geolonia.com.git
+   $ cd issues.geolonia.com
    $ yarn
    ```
 
