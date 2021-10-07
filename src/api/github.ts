@@ -77,6 +77,7 @@ const githubPagenation = async function (
       headers,
       cache: "no-store",
     }).then((res) => {
+      if(res.status > 399) { throw new Error(`Error with status ${res.status}`) }
       const linkHeader = res.headers.get("Link");
       let nextUrl = "";
       if (linkHeader) {

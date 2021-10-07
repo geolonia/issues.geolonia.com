@@ -20,7 +20,7 @@ function App() {
     ORGANIZATION_NAME,
     accessToken
   );
-    console.log({error})
+
   const activeRepositories = repositories
     .filter((repository) => !repository.isArchived)
     .sort((repo1, repo2) => repo2.openIssuesCount - repo1.openIssuesCount);
@@ -46,7 +46,8 @@ function App() {
           </a>
         )}
       </header>
-
+      {error ?
+      <p>{error.message}</p> :
       <div className="container">
         <section className="sidebar">
           {loading ? (
@@ -103,7 +104,7 @@ function App() {
             </Route>
           </Switch>
         </section>
-      </div>
+      </div>}
 
       <footer className="footer">
         <ul className="footer-menu">
