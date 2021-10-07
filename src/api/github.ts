@@ -15,6 +15,7 @@ const getHeader = (accessToken: string) =>
 
 const githubResourceMapping = {
   repository: ({
+    assignees,
     archived: isArchived,
     name,
     updated_at: updatedAt,
@@ -22,6 +23,7 @@ const githubResourceMapping = {
     open_issues_count: openIssuesCount,
   }: any) =>
     (({
+      assignees,
       isArchived,
       name,
       updatedAt,
@@ -30,6 +32,7 @@ const githubResourceMapping = {
     } as unknown) as Geolonia.Repository),
 
   issue: ({
+    assignees,
     html_url: htmlUrl,
     id,
     title,
@@ -41,6 +44,7 @@ const githubResourceMapping = {
     pull_request: pullRequest,
   }: any) => {
     const commonProps = {
+      assignees,
       htmlUrl,
       id,
       title,

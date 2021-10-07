@@ -9,15 +9,18 @@ import {
 export const useRepositories = (org: string, accessToken: string) => {
   const [loading, setLoading] = useState(false);
   const [repositories, setRepositories] = useState<Geolonia.Repository[]>([]);
+  const [error, setError] = useState<null | any>(null)
 
   useEffect(() => {
     setLoading(true);
-    listRepositories(org, accessToken).then((data) => {
-      setRepositories(data);
-      setLoading(false);
-    });
+    listRepositories(org, accessToken)
+      .then((data) => {
+        setRepositories(data);
+      })
+      .catch((err) => setError(err))
+      .finally(() => setLoading(false));
   }, [accessToken, org]);
-  return { loading, repositories };
+  return { loading, repositories, error };
 };
 
 export const useIssues = (

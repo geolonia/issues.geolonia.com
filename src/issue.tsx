@@ -27,6 +27,14 @@ const iconStyle: React.CSSProperties = {
   top: 3,
 };
 
+const assigneeListStyle: React.CSSProperties = {
+  padding: 0,
+}
+
+const assigneeListItemStyle: React.CSSProperties = {
+  listStyle: 'none',
+}
+
 function Issue(props: Props) {
   const { data: issue, org, repo, accessToken } = props;
   const { number: num, title, updatedAt } = issue;
@@ -39,7 +47,7 @@ function Issue(props: Props) {
     accessToken
   );
 
-    const repoIdentifier = issue.htmlUrl.split('/').slice(3, 5).join('/')
+  const repoIdentifier = issue.htmlUrl.split('/').slice(3, 5).join('/')
 
   return (
     <li className="issue-item">
@@ -69,6 +77,13 @@ function Issue(props: Props) {
       </h4>
       <p><small>{repoIdentifier}</small></p>
       <p>{dayjs(updatedAt).fromNow()}</p>
+      {
+        issue.assignees.length > 0 && <ul style={assigneeListStyle}>
+          {issue.assignees.map(assignee => <li key={assignee.login} style={assigneeListItemStyle}>
+            {assignee.login}
+          </li>)}
+        </ul>
+      }
       <ul className="label-list">
         {issue.labels.map((label) => (
           <li

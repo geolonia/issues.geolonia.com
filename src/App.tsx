@@ -16,11 +16,11 @@ function App() {
     logout,
   } = useAccessToken();
 
-  const { loading, repositories } = useRepositories(
+  const { loading, repositories, error } = useRepositories(
     ORGANIZATION_NAME,
     accessToken
   );
-
+    console.log({error})
   const activeRepositories = repositories
     .filter((repository) => !repository.isArchived)
     .sort((repo1, repo2) => repo2.openIssuesCount - repo1.openIssuesCount);
@@ -54,6 +54,7 @@ function App() {
               <span>loading...</span>
             </div>
           ) : (
+            error ? ('error') : (
             <ul className="repositories">
               {activeRepositories.length === 0 ? (
                 <li className="repo-item repo-item-head">
@@ -77,7 +78,7 @@ function App() {
                   })}
                 </>
               )}
-            </ul>
+            </ul>)
           )}
         </section>
 

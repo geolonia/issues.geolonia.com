@@ -17,6 +17,7 @@ declare namespace Geolonia {
     updatedAt: string;
     number: number;
     type: "issue";
+    assignees: { login: string }[];
   };
 
   type Pull = {
@@ -29,6 +30,7 @@ declare namespace Geolonia {
     updatedAt: string;
     number: number;
     type: "pull";
+    assignees: { login: string }[];
   };
   type Label = { name: string; color: string };
 }
