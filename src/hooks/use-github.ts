@@ -1,42 +1,67 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  TransformedResp,
   listIssues,
   listLabeledIssues,
-  listRepositories,
   describePull,
   listRepositories2,
 } from "../api/github";
 
+const LOCAL_STORAGE_PERSISTED_STATE_KEY = 'issues.geolonia.com/repositories'
+
 export const useRepositories = (org: string, accessToken: string) => {
   const [loading, setLoading] = useState(false);
-  const [repositories, setRepositories] = useState<Geolonia.Repository[]>([]);
+  const [isFetched, setIsFetched] = useState(false);
+  const [repositories, setRepositories] = useState<TransformedResp['repositories']>(() => {
+    const persisted = localStorage.getItem(LOCAL_STORAGE_PERSISTED_STATE_KEY)
+    if(persisted) {
+      try {
+        return JSON.parse(persisted)
+      } catch (error) {
+        localStorage.removeItem(LOCAL_STORAGE_PERSISTED_STATE_KEY)
+      return [] 
+      }
+    } else {
+      return []
+    }
+  });
   const [error, setError] = useState<null | any>(null)
 
   useEffect(() => {
+    if(repositories.length === 0) {
+      (async () => {
+        setLoading(true);
+        let nextCursor = undefined
+        do {
+          // @ts-ignore
+          const { info, repositories: fetchedRepositories } = await listRepositories2(org, accessToken, nextCursor)
+          setRepositories(repositories => [...repositories, ...fetchedRepositories])
+          nextCursor = info.hasNextPage ? info.endCursor : null
+        } while (nextCursor);
+        setLoading(false);
+        setIsFetched(true);
+      })()
+    }
+  }, [accessToken, org, repositories.length]);
 
-    const allRepositories = [];
+  useEffect(() => {
+   if(isFetched) {
+    localStorage.setItem(LOCAL_STORAGE_PERSISTED_STATE_KEY, JSON.stringify(repositories))
+   } 
+  }, [isFetched, repositories])
 
-    (async () => {
-      setLoading(true);
-      let nextCursor = undefined
-      do {
-        // @ts-ignore
-        const { info, repositories } = await listRepositories2(org, accessToken, nextCursor)
-        allRepositories.push(...repositories)
-        console.log({info})
-        nextCursor = info.hasNextPage ? info.endCursor : null
-      } while (nextCursor);
-      console.log(allRepositories)
-    })()
-
-    listRepositories(org, accessToken)
-      .then((data) => {
-        setRepositories(data);
-      })
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
-  }, [accessToken, org]);
-  return { loading, repositories, error };
+  return {
+    loading,
+    repositories,
+    error,
+    refetch: useCallback(() => {
+      setRepositories([])
+      localStorage.removeItem(LOCAL_STORAGE_PERSISTED_STATE_KEY)
+    }, []),
+    clearCache: useCallback(() => {
+      localStorage.removeItem(LOCAL_STORAGE_PERSISTED_STATE_KEY)     
+    }, [])
+  };
 };
 
 export const useIssues = (

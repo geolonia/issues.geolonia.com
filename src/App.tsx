@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 import { useRepositories, useAccessToken } from "./hooks/use-github";
@@ -17,17 +17,21 @@ function App() {
     logout,
   } = useAccessToken();
 
-  const { loading, repositories, error } = useRepositories(
+  const { loading, repositories, error, refetch, clearCache } = useRepositories(
     ORGANIZATION_NAME,
     accessToken
   );
 
+    const handleLogout = useCallback(() => {
+      clearCache()
+      logout()
+    }, [clearCache, logout])
+
   const activeRepositories = repositories
-    .filter((repository) => !repository.isArchived)
-    .sort((repo1, repo2) => repo2.openIssuesCount - repo1.openIssuesCount);
+    .sort((repo1, repo2) => repo2.issues.length - repo1.issues.length);
 
   const totalIssuesCount = activeRepositories.reduce(
-    (sum, repo) => sum + repo.openIssuesCount,
+    (sum, repo) => sum + repo.issues.length,
     0
   );
 
@@ -36,9 +40,13 @@ function App() {
       <header className="header">
         <h1 className="app-name">
           <Link to="/">Geolonia Issues</Link>
+          {loading ?
+            <small className="status">{'loading...'}</small> :
+            <button className="refetch" onClick={refetch}>refetch</button>
+          }
         </h1>
         {!!accessToken ? (
-          <Link className="button" to="/" onClick={logout}>
+          <Link className="button" to="/" onClick={handleLogout}>
             {"logout"}
           </Link>
         ) : (
@@ -51,12 +59,7 @@ function App() {
       <p>{error.message}</p> :
       <div className="container">
         <section className="sidebar">
-          {loading ? (
-            <div className="repositories">
-              <span>loading...</span>
-            </div>
-          ) : (
-            error ? ('error') : (
+          { error ? 'error': (
             <ul className="repositories">
               {activeRepositories.length === 0 ? (
                 <li className="repo-item repo-item-head">
@@ -66,11 +69,11 @@ function App() {
                 <>
                   <li className="repo-item repo-item-head">{`total (${totalIssuesCount})`}</li>
                   {activeRepositories.map((repository) => {
-                    const { name, openIssuesCount, isPrivate } = repository;
+                    const { name, issues, isPrivate } = repository;
                     return (
                       <li key={name} className="repo-item">
                         <Link className="repo-link" to={`/repos/${name}`}>
-                          {`${name} (${openIssuesCount})`}
+                          {`${name} (${issues.length})`}
                           {isPrivate && (
                             <span className="private-label">private</span>
                           )}
@@ -80,8 +83,8 @@ function App() {
                   })}
                 </>
               )}
-            </ul>)
-          )}
+            </ul>)}
+          
         </section>
 
         <section className="body">

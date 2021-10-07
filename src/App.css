@@ -29,6 +29,24 @@ a:hover {
   text-decoration: none;
 }
 
+.status {
+  color: white;
+  font-size: .6em;
+  margin-left: 1em;
+}
+.refetch {
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  background: none;
+  margin-left: 1em;
+  cursor: pointer;
+}
+.refetch:hover {
+  border-color: #dddddd;
+  color: #aaaaaa;
+}
+
 .container {
   display: flex;
   margin-top: 20px;

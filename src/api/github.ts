@@ -98,12 +98,6 @@ const githubPagenation = async function (
   return result.flat();
 };
 
-export const listRepositories = async (org: string, token: string) => {
-  const url: string = `${apiEndpoint}/orgs/${org}/repos`;
-  const data = await githubPagenation(url, getHeader(token));
-  return data.map(githubResourceMapping.repository);
-};
-
 type Label = {
   node: {
     name: string;
@@ -149,6 +143,7 @@ type Repo = {
   node: {
     name: string;
     url: string;
+    isPrivate: boolean;
     labels: {
       edges: Label[];
     };
@@ -156,7 +151,7 @@ type Repo = {
       edges: Issue[];
     }
     pullRequests: {
-      edges: PullRequest[]
+      edges: PullRequest[];
     }
   }
 }
@@ -175,16 +170,35 @@ type GraphQLResp = {
 }
 
 type FlattenNode<T extends { node: any }> = T['node']
-type TransformedResp = {
+
+export type TransformedResp = {
   info: GraphQLResp['data']['search']['pageInfo'],
-  repositories: FlattenNode<Repo> & {
+  repositories: {
+    name: string;
+    url: string;
+    isPrivate: boolean;
     labels: FlattenNode<Label>[];
-    issue: FlattenNode<Issue & { assignees: FlattenNode<Assignee>[] }>[];
-    pullRequests: FlattenNode<PullRequest & { assignees: FlattenNode<Assignee>[] }>[];
+    issues: {
+      title: string;
+      number: number;
+      url: string;
+      updateAt: string;
+      createAt: string;
+      assignees: FlattenNode<Assignee>[]
+    }[];
+    pullRequests: {
+      title: string;
+      number: number;
+      url: string;
+      isDraft: boolean;
+      updateAt: string;
+      createAt: string;
+      assignees: FlattenNode<Assignee>[];
+    }[]
   }[]
 }
 
-export const listRepositories2 = async (org: string, token: string, nextCursor?: string): Promise<TransformedResp> => {
+export const listRepositories2 = async (org: string, token: string, nextCursor?: string) => {
   const after =  nextCursor ? `after: "${nextCursor}"`: ''
   const resp = await fetch(graphqlEndpoint, {
     method: 'POST',
@@ -193,7 +207,7 @@ export const listRepositories2 = async (org: string, token: string, nextCursor?:
       queryString: `org: ${org}`,
       query: `
 query { 
-	search (type: REPOSITORY, query: "org:${org}", ${after}, first: 40) {
+	search (type: REPOSITORY, query: "org:${org} archived:false", ${after}, first: 20) {
     pageInfo {
       startCursor
       hasNextPage
@@ -204,6 +218,7 @@ query {
         ... on Repository {
           name
           url
+          isPrivate
           labels(first: 100) {
             edges {
               node {
@@ -259,8 +274,9 @@ query {
 }`
     })
   } as any)
+  // TODO: handle Error
   const { data: { search } } = (await resp.json()) as unknown as GraphQLResp
-  const transformedResp = {
+  const transformedResp: TransformedResp = {
     info: search.pageInfo,
     repositories: search.edges.map(({node: repo}) => ({
       ...repo,
@@ -268,7 +284,7 @@ query {
       issues: repo.issues.edges.map(({node: issue}) => ({...issue, assignees: issue.assignees.edges.map(({node: assignee}) => assignee)})),
       pullRequests: repo.pullRequests.edges.map(({node: pullRequest}) => ({...pullRequest, assignees: pullRequest.assignees.edges.map(({node: assignee}) => assignee)})),     
     }))
-  } as unknown as TransformedResp
+  }
   return transformedResp
 }
 
