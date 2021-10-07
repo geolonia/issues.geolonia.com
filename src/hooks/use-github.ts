@@ -4,6 +4,7 @@ import {
   listLabeledIssues,
   listRepositories,
   describePull,
+  listRepositories2,
 } from "../api/github";
 
 export const useRepositories = (org: string, accessToken: string) => {
@@ -12,7 +13,22 @@ export const useRepositories = (org: string, accessToken: string) => {
   const [error, setError] = useState<null | any>(null)
 
   useEffect(() => {
-    setLoading(true);
+
+    const allRepositories = [];
+
+    (async () => {
+      setLoading(true);
+      let nextCursor = undefined
+      do {
+        // @ts-ignore
+        const { info, repositories } = await listRepositories2(org, accessToken, nextCursor)
+        allRepositories.push(...repositories)
+        console.log({info})
+        nextCursor = info.hasNextPage ? info.endCursor : null
+      } while (nextCursor);
+      console.log(allRepositories)
+    })()
+
     listRepositories(org, accessToken)
       .then((data) => {
         setRepositories(data);

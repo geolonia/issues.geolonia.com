@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 import { useRepositories, useAccessToken } from "./hooks/use-github";
 
+import LabelMatrix from './label-matrix';
 import Issues from "./issues";
 import Callback from "./callback";
 
@@ -85,6 +86,11 @@ function App() {
 
         <section className="body">
           <Switch>
+            <Route exact path="/">
+              <LabelMatrix
+
+              />
+            </Route>
             <Route exact path="/repos/:name">
               <Issues
                 org={ORGANIZATION_NAME}
