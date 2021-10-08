@@ -120,6 +120,9 @@ type Issue = {
     url: string;
     updateAt: string;
     createAt: string;
+    labels: {
+      edges: Label[];
+    };
     assignees: {
       edges: Assignee[];
     }
@@ -133,6 +136,9 @@ type PullRequest = {
     isDraft: boolean;
     updateAt: string;
     createAt: string;
+    labels: {
+      edges: Label[];
+    };
     assignees: {
       edges: Assignee[];
     }
@@ -144,9 +150,6 @@ type Repo = {
     name: string;
     url: string;
     isPrivate: boolean;
-    labels: {
-      edges: Label[];
-    };
     issues: {
       edges: Issue[];
     }
@@ -177,13 +180,15 @@ export type TransformedResp = {
     name: string;
     url: string;
     isPrivate: boolean;
-    labels: FlattenNode<Label>[];
     issues: {
       title: string;
       number: number;
       url: string;
+      isDraft: undefined;
       updateAt: string;
       createAt: string;
+      isPull: undefined,
+      labels: FlattenNode<Label>[];
       assignees: FlattenNode<Assignee>[]
     }[];
     pullRequests: {
@@ -193,6 +198,8 @@ export type TransformedResp = {
       isDraft: boolean;
       updateAt: string;
       createAt: string;
+      isPull: true;
+      labels: FlattenNode<Label>[];
       assignees: FlattenNode<Assignee>[];
     }[]
   }[]
@@ -219,16 +226,7 @@ query {
           name
           url
           isPrivate
-          labels(first: 100) {
-            edges {
-              node {
-                name
-                color
-                description
-              }
-            }
-          }
-          issues(first: 100, states: [OPEN]) {
+          issues (first: 100, states: [OPEN]) {
             edges {
               node {
                 title
@@ -236,6 +234,15 @@ query {
                 url
                 updatedAt
                 createdAt
+                labels(first: 100) {
+                  edges {
+                    node {
+                      name
+                      color
+                      description
+                    }
+                  }
+                }
                 assignees(first: 100) {
                   edges {
                     node {
@@ -256,6 +263,15 @@ query {
                 url
                 updatedAt
                 createdAt
+                labels(first: 100) {
+                  edges {
+                    node {
+                      name
+                      color
+                      description
+                    }
+                  }
+                }
                 assignees(first: 5) {
                   edges {
                     node {
@@ -280,9 +296,19 @@ query {
     info: search.pageInfo,
     repositories: search.edges.map(({node: repo}) => ({
       ...repo,
-      labels: repo.labels.edges.map(({node: label}) => label),
-      issues: repo.issues.edges.map(({node: issue}) => ({...issue, assignees: issue.assignees.edges.map(({node: assignee}) => assignee)})),
-      pullRequests: repo.pullRequests.edges.map(({node: pullRequest}) => ({...pullRequest, assignees: pullRequest.assignees.edges.map(({node: assignee}) => assignee)})),     
+      issues: repo.issues.edges.map(({node: issue}) => ({
+        ...issue,
+        isDraft: undefined,
+        isPull: undefined,
+        labels: issue.labels.edges.map(({node: label}) => label),
+        assignees: issue.assignees.edges.map(({node: assignee}) => assignee),
+      })),
+      pullRequests: repo.pullRequests.edges.map(({node: pullRequest}) => ({
+        ...pullRequest,
+        isPull: true,
+        labels: pullRequest.labels.edges.map(({node: label}) => label),
+        assignees: pullRequest.assignees.edges.map(({node: assignee}) => assignee),
+      })),     
     }))
   }
   return transformedResp

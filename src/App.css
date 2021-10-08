@@ -172,3 +172,33 @@ a.new-issue {
   font-size: 1.2em;
   margin: 15px;
 }
+
+.label-matrix-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+tr>th:first-child {
+  border-right: 1px solid #e74230; 
+}
+
+tbody>tr:not(:last-child) {
+  border-bottom: 1px dashed #e74230; 
+}
+
+tfoot tr {
+  border-top: 1px solid #e74230;
+}
+
+td:not(:last-child), th:not(:last-child) {
+  border-right: 1px dashed #e74230; 
+}
+
+th.label-matrix-col {
+  width: 200px;
+  height: 40px;
+}
+.label-matrix-col {
+  padding: 0;
+  width: 400px;
+}

@@ -91,7 +91,9 @@ function App() {
           <Switch>
             <Route exact path="/">
               <LabelMatrix
-
+                repositories={repositories}
+                colIdentifier={'impact'}
+                rowIdentifier={'time'}
               />
             </Route>
             <Route exact path="/repos/:name">
