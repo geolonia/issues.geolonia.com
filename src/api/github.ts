@@ -206,15 +206,15 @@ export type TransformedResp = {
 }
 
 export const listRepositories2 = async (org: string, token: string, nextCursor?: string) => {
-  const after =  nextCursor ? `after: "${nextCursor}"`: ''
+  const after =  nextCursor ? ` after: "${nextCursor}", `: ''
   const resp = await fetch(graphqlEndpoint, {
     method: 'POST',
     headers: getHeader(token),
     body: JSON.stringify({
-      queryString: `org: ${org}`,
+      // TODO: use variables
       query: `
 query { 
-	search (type: REPOSITORY, query: "org:${org} archived:false", ${after}, first: 20) {
+	search (type: REPOSITORY, query: "org:${org} archived:false",${after} first: 20) {
     pageInfo {
       startCursor
       hasNextPage
@@ -234,7 +234,7 @@ query {
                 url
                 updatedAt
                 createdAt
-                labels(first: 100) {
+                labels(first: 50) {
                   edges {
                     node {
                       name
@@ -243,7 +243,7 @@ query {
                     }
                   }
                 }
-                assignees(first: 100) {
+                assignees(first: 5) {
                   edges {
                     node {
                       login
@@ -263,7 +263,7 @@ query {
                 url
                 updatedAt
                 createdAt
-                labels(first: 100) {
+                labels(first: 50) {
                   edges {
                     node {
                       name
@@ -290,8 +290,8 @@ query {
 }`
     })
   } as any)
-  // TODO: handle Error
   const { data: { search } } = (await resp.json()) as unknown as GraphQLResp
+  console.log(search.edges.map(edge => edge.node.name))
   const transformedResp: TransformedResp = {
     info: search.pageInfo,
     repositories: search.edges.map(({node: repo}) => ({

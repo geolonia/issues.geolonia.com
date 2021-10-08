@@ -16,7 +16,9 @@ function Callback(props: Props) {
   React.useEffect(() => {
     if (code && typeof code === "string" && !onceLoaded) {
       setOnceLoaded(true);
-      requestAccessToken(code).finally(() => history.replace("/"));
+      requestAccessToken(code).finally(() => {
+        history.replace("/")
+      });
     }
   }, [code, history, onceLoaded, requestAccessToken]);
   return null;

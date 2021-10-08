@@ -32,17 +32,26 @@ export const useRepositories = (org: string, accessToken: string) => {
       (async () => {
         setLoading(true);
         let nextCursor = undefined
+        let fetchedRepositories = []
         do {
-          // @ts-ignore
-          const { info, repositories: fetchedRepositories } = await listRepositories2(org, accessToken, nextCursor)
-          setRepositories(repositories => [...repositories, ...fetchedRepositories])
-          nextCursor = info.hasNextPage ? info.endCursor : null
+          try {
+            // @ts-ignore
+          const { info, repositories: currentlyFetchedRepositories } = await listRepositories2(org, accessToken, nextCursor)
+          fetchedRepositories.push(...currentlyFetchedRepositories)
+          setRepositories([...repositories, ...fetchedRepositories])
+          nextCursor = info.hasNextPage ? info.endCursor : null 
+          } catch (error) {
+            setError(error)
+            setLoading(false)
+            setIsFetched(true)
+            return
+          }
         } while (nextCursor);
         setLoading(false);
         setIsFetched(true);
       })()
     }
-  }, [accessToken, org, repositories.length]);
+  }, [accessToken, org, repositories.length, repositories]);
 
   useEffect(() => {
    if(isFetched) {
@@ -54,6 +63,9 @@ export const useRepositories = (org: string, accessToken: string) => {
     loading,
     repositories,
     error,
+    clearError: useCallback(() => {
+      setError(null)
+    }, []),
     refetch: useCallback(() => {
       setRepositories([])
       localStorage.removeItem(LOCAL_STORAGE_PERSISTED_STATE_KEY)

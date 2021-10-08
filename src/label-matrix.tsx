@@ -40,7 +40,6 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 				...repository.issues,
 				...repository.pullRequests,
 			].forEach((issueOrPull) => {
-				console.log({issueOrPull})
 			const parsedLabels = issueOrPull.labels
 				.map(label => label.name.split(':').map(flagment => flagment.trim()))
 			const column = parsedLabels.find(([key]) => key.toLowerCase() === colIdentifier.toLowerCase())
@@ -64,9 +63,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 
 	if(!matrix) return <>{'loading'}</>
 
-	// TODO: 一般化
-	console.log(matrix)
-
+	// TODO: key: value で選択できるように一般化
 	return <>
 	<h2>Priority Matrix</h2>
 	<table className={'label-matrix-table'}>

@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 import { useRepositories, useAccessToken } from "./hooks/use-github";
@@ -17,21 +17,26 @@ function App() {
     logout,
   } = useAccessToken();
 
-  const { loading, repositories, error, refetch, clearCache } = useRepositories(
+  const { loading, repositories, error, clearError, refetch, clearCache } = useRepositories(
     ORGANIZATION_NAME,
     accessToken
   );
 
-    const handleLogout = useCallback(() => {
-      clearCache()
-      logout()
-    }, [clearCache, logout])
+useEffect(() => {
+  clearError()
+}, [clearError, repositories.length])
 
-  const activeRepositories = repositories
-    .sort((repo1, repo2) => repo2.issues.length - repo1.issues.length);
+  const handleLogout = useCallback(() => {
+    clearCache()
+    logout()
+  }, [clearCache, logout])
+
+  const activeRepositories = [...repositories]
+
+  activeRepositories.sort((repo1, repo2) => (repo2.issues.length + repo2.pullRequests.length) - (repo1.issues.length + repo1.pullRequests.length));
 
   const totalIssuesCount = activeRepositories.reduce(
-    (sum, repo) => sum + repo.issues.length,
+    (sum, repo) => sum + repo.issues.length + repo.pullRequests.length,
     0
   );
 
@@ -56,66 +61,67 @@ function App() {
         )}
       </header>
       {error ?
-      <p>{error.message}</p> :
-      <div className="container">
-        <section className="sidebar">
-          { error ? 'error': (
-            <ul className="repositories">
-              {activeRepositories.length === 0 ? (
-                <li className="repo-item repo-item-head">
-                  {"No unarchived repositories seem to exist."}
-                </li>
-              ) : (
-                <>
-                  <li className="repo-item repo-item-head">{`total (${totalIssuesCount})`}</li>
-                  {activeRepositories.map((repository) => {
-                    const { name, issues, isPrivate } = repository;
-                    return (
-                      <li key={name} className="repo-item">
-                        <Link className="repo-link" to={`/repos/${name}`}>
-                          {`${name} (${issues.length})`}
-                          {isPrivate && (
-                            <span className="private-label">private</span>
-                          )}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </>
-              )}
-            </ul>)}
-          
-        </section>
+      <p>{'It seems that your request exceeds the GitHub API quota. Please login to continue, or wait for a while.'}</p> :
+       <div className="container">
+      <section className="sidebar">
+        {
+          <ul className="repositories">
+            {activeRepositories.length === 0 ? (
+              <li className="repo-item repo-item-head">
+                {!loading && "No unarchived repositories seem to exist."}
+              </li>
+            ) : (
+              <>
+                <li className="repo-item repo-item-head">{`total (${totalIssuesCount} issues / ${activeRepositories.length} repos)`}</li>
+                {activeRepositories.map((repository) => {
+                  const { name, issues, pullRequests, isPrivate, url } = repository;
+                  return (
+                    <li key={url} className="repo-item">
+                      <Link className="repo-link" to={`/repos/${name}`}>
+                        {`${name} (${issues.length + pullRequests.length})`}
+                        {isPrivate && (
+                          <span className="private-label">private</span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </>
+            )}
+          </ul>}
+        
+      </section>
 
-        <section className="body">
-          <Switch>
-            <Route exact path="/">
-              <LabelMatrix
-                repositories={repositories}
-                colIdentifier={'impact'}
-                rowIdentifier={'time'}
-              />
-            </Route>
-            <Route exact path="/repos/:name">
-              <Issues
-                org={ORGANIZATION_NAME}
-                type="repo"
-                accessToken={accessToken}
-              ></Issues>
-            </Route>
-            <Route exact path="/labels/:name">
-              <Issues
-                org={ORGANIZATION_NAME}
-                type="label"
-                accessToken={accessToken}
-              ></Issues>
-            </Route>
-            <Route exact path="/login/callback">
-              <Callback requestAccessToken={requestAccessToken}></Callback>
-            </Route>
-          </Switch>
-        </section>
-      </div>}
+      <section className="body">
+        <Switch>
+          <Route exact path="/">
+            <LabelMatrix
+              repositories={repositories}
+              colIdentifier={'impact'}
+              rowIdentifier={'time'}
+            />
+          </Route>
+          <Route exact path="/repos/:name">
+            <Issues
+              org={ORGANIZATION_NAME}
+              type="repo"
+              accessToken={accessToken}
+            ></Issues>
+          </Route>
+          <Route exact path="/labels/:name">
+            <Issues
+              org={ORGANIZATION_NAME}
+              type="label"
+              accessToken={accessToken}
+            ></Issues>
+          </Route>
+          <Route exact path="/login/callback">
+            <Callback requestAccessToken={requestAccessToken}></Callback>
+          </Route>
+        </Switch>
+      </section>
+    </div>
+      }
 
       <footer className="footer">
         <ul className="footer-menu">
