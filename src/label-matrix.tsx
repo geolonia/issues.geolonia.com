@@ -64,7 +64,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 	if(!matrix) return <>{'loading'}</>
 
 	// TODO: key: value で選択できるように一般化
-	return <>
+	return <section className="label-matrix-container">
 	<h2>Priority Matrix</h2>
 	<table className={'label-matrix-table'}>
 		<tbody>
@@ -113,7 +113,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 			<th className="label-matrix-col">Time: short</th>
 		</tr>
 		</tfoot>
-	</table></>
+	</table></section>
 }
 
 export default LabelMatrix

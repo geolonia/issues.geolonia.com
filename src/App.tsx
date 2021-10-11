@@ -1,15 +1,35 @@
-import React, {useCallback, useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./App.css";
 import { useRepositories, useAccessToken } from "./hooks/use-github";
-
+import {Sidebar} from './sidebar'
 import LabelMatrix from './label-matrix';
 import Issues from "./issues";
 import Callback from "./callback";
 
 const ORGANIZATION_NAME = "geolonia";
 
+const LOCAL_STORAGE_PERSISTED_STATE_KEY = 'issues.geolonia.com/sidebarVisibility'
+
+const closeButtonStyle: React.CSSProperties = {
+  width: '36px',
+  height: '36px',
+  position: 'absolute',
+  top: '60px',
+  left: '340px',
+  display: 'block',
+  zIndex: 9999,
+  cursor: 'pointer',
+  textDecoration: 'none',
+  border: 'none',
+  padding: 0,
+  background: 'none',
+};
+
 function App() {
+
+  const [sidebarVisibility, setSidebarVisibility] = useState(localStorage.getItem(LOCAL_STORAGE_PERSISTED_STATE_KEY) === 'false' ? false : true)
+
   const {
     accessToken,
     requestAccessToken,
@@ -21,6 +41,10 @@ function App() {
     ORGANIZATION_NAME,
     accessToken
   );
+
+  const handleClose = useCallback(() => {
+    setSidebarVisibility(false);
+  }, []);
 
 useEffect(() => {
   clearError()
@@ -35,10 +59,7 @@ useEffect(() => {
 
   activeRepositories.sort((repo1, repo2) => (repo2.issues.length + repo2.pullRequests.length) - (repo1.issues.length + repo1.pullRequests.length));
 
-  const totalIssuesCount = activeRepositories.reduce(
-    (sum, repo) => sum + repo.issues.length + repo.pullRequests.length,
-    0
-  );
+
 
   return (
     <Router>
@@ -63,34 +84,20 @@ useEffect(() => {
       {error ?
       <p>{'It seems that your request exceeds the GitHub API quota. Please login to continue, or wait for a while.'}</p> :
        <div className="container">
-      <section className="sidebar">
         {
-          <ul className="repositories">
-            {activeRepositories.length === 0 ? (
-              <li className="repo-item repo-item-head">
-                {!loading && "No unarchived repositories seem to exist."}
-              </li>
-            ) : (
-              <>
-                <li className="repo-item repo-item-head">{`total (${totalIssuesCount} issues / ${activeRepositories.length} repos)`}</li>
-                {activeRepositories.map((repository) => {
-                  const { name, issues, pullRequests, isPrivate, url } = repository;
-                  return (
-                    <li key={url} className="repo-item">
-                      <Link className="repo-link" to={`/repos/${name}`}>
-                        {`${name} (${issues.length + pullRequests.length})`}
-                        {isPrivate && (
-                          <span className="private-label">private</span>
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </>
-            )}
-          </ul>}
-        
-      </section>
+          sidebarVisibility ? <>
+            <Sidebar loading={loading} repositories={activeRepositories}></Sidebar>
+            {/* <button style={closeButtonStyle} onClick={handleClose}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+                <g fill="none" fillRule="evenodd">
+                  <circle stroke="#FFF" strokeWidth="2" fill="#D8D8D8" cx="11" cy="11" r="10" />
+                  <path d="M11 1C5.5 1 1 5.5 1 11s4.5 10 10 10 10-4.5 10-10S16.5 1 11 1zm4.9 13.5l-1.4 1.4-3.5-3.5-3.5 3.5-1.4-1.4L9.6 11 6.1 7.5l1.4-1.4L11 9.6l3.5-3.5 1.4 1.4-3.5 3.5 3.5 3.5z" fill="#000" fillRule="nonzero" />
+                </g>
+              </svg>
+              </button> */}
+          </> :
+          <></>
+        }
 
       <section className="body">
         <Switch>
@@ -131,8 +138,8 @@ useEffect(() => {
             >{`${ORGANIZATION_NAME} on GitHub`}</a>
           </li>
           <li>
-            <a href="https://github.com/geolonia/ops">
-              @geolonia/ops on GitHub
+            <a href="https://github.com/geolonia/issues.geolonia.com">
+              @geolonia/issues.geolonia.com on GitHub
             </a>
           </li>
         </ul>
