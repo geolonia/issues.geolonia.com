@@ -11,6 +11,7 @@ import {IssueCard} from './issue-card'
 
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime";
+import { blackOrWhite } from 'utils/color';
 
 dayjs.extend(relativeTime);
 
@@ -84,6 +85,8 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 					return <td className="label-matrix-col" key={`${impact}/${time}`}>
 						<ul style={issueListStyle}>
 						{issueOrPulls.map(issueOrPull => {
+							const { labels } = issueOrPull
+							const priorityLabel = labels.find(label => label.name.toLowerCase().startsWith('priority'))
 							return <li
 								style={issueListItemStyle}
 								key={issueOrPull.number}
@@ -104,6 +107,16 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 							/>
 							)}
 							{issueOrPull.isDraft && <span className="draft-label">{"draft"}</span>}
+							{priorityLabel && <span
+								className="label-item"
+								style={{
+								background: `#${priorityLabel.color}`,
+								color: blackOrWhite(`#${priorityLabel.color}`),
+								}}
+								><span>
+								{priorityLabel.name}
+								</span>
+							</span>}
 							<a href={issueOrPull.url}>
 								{`${issueOrPull.title} #${issueOrPull.number}`}
 								<ExternalIcon
