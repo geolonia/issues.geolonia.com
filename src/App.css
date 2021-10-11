@@ -177,6 +177,7 @@ a.new-issue {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
+  font-size: 12px;
 }
 
 tr>th:first-child {
@@ -202,4 +203,10 @@ th.label-matrix-col {
 .label-matrix-col {
   padding: 0;
   width: 400px;
+}
+
+.relative-time {
+  margin-left: 2px;
+  font-size: .8em;
+  font-weight: bold;
 }

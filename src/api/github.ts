@@ -118,8 +118,8 @@ type Issue = {
     title: string;
     number: number;
     url: string;
-    updateAt: string;
-    createAt: string;
+    updatedAt: string;
+    createdAt: string;
     labels: {
       edges: Label[];
     };
@@ -134,8 +134,8 @@ type PullRequest = {
     number: number;
     url: string;
     isDraft: boolean;
-    updateAt: string;
-    createAt: string;
+    updatedAt: string;
+    createdAt: string;
     labels: {
       edges: Label[];
     };
@@ -185,8 +185,8 @@ export type TransformedResp = {
       number: number;
       url: string;
       isDraft: undefined;
-      updateAt: string;
-      createAt: string;
+      updatedAt: string;
+      createdAt: string;
       isPull: undefined,
       labels: FlattenNode<Label>[];
       assignees: FlattenNode<Assignee>[]
@@ -196,8 +196,8 @@ export type TransformedResp = {
       number: number;
       url: string;
       isDraft: boolean;
-      updateAt: string;
-      createAt: string;
+      updatedAt: string;
+      createdAt: string;
       isPull: true;
       labels: FlattenNode<Label>[];
       assignees: FlattenNode<Assignee>[];

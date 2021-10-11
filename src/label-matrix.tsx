@@ -28,10 +28,40 @@ const iconStyle: React.CSSProperties = {
 
 type GitHubLabelMatrix = Record<string, Record<string, (TransformedResp['repositories'][number]['issues'][number] | TransformedResp['repositories'][number]['pullRequests'][number])[]>>
 
+const timeAgo = (createdAt: string) => {
+	const from = new Date(createdAt).getTime() / 1000
+	const into = new Date().getTime() / 1000
+	const diff = into - from
+	let value
+	let unit
+	if(diff < 60) {
+		value = Math.round(diff)
+		unit = 'sec.'
+	} else if (diff < 60 * 60) {
+		value = Math.round(diff / 60)
+		unit = 'min.'
+	} else if (diff < 60 * 60 * 24) {
+		value = Math.round(diff / 60 / 60)
+		unit = value === 1 ? 'hour' : 'hours'
+	} else if (diff < 60 * 60 * 24 * 7) {
+		value = Math.round(diff / 60 / 60 / 24)
+		unit = value === 1 ? 'day' : 'days'
+	} else if (diff < 60 * 60 * 24 * 7 * 4) {
+		value = Math.round(diff / 60 / 60 / 24 / 7)
+		unit = value === 1 ? 'week' : 'weeks'
+	} else if (diff < 60 * 60 * 24 * 365) {
+		value = Math.round(diff / 60 / 60 / 24 / 30)
+		unit = value === 1 ? 'month' : 'months'
+	} else {
+		value = Math.ceil(diff / 60 / 60 / 24 / 365)
+		unit = value === 1 ? 'year' : 'years'
+	}
+	return `${value} ${unit} ago`
+}
+
 export const LabelMatrix: React.FC<Props> = (props) => {
 	const { repositories, colIdentifier, rowIdentifier } = props
 	const [matrix, setMatrix] = useState<GitHubLabelMatrix | null>(null)
-
 
 	useEffect(() => {
 		if(!repositories) return
@@ -75,7 +105,8 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 					const issueOrPulls = (matrix[impact] || {})[time] || []
 					return <td className="label-matrix-col" key={`${impact}/${time}`}>
 						<ul style={issueListStyle}>
-						{issueOrPulls.map(issueOrPull => <li style={issueListItemStyle} key={issueOrPull.number}>
+						{issueOrPulls.map(issueOrPull => {
+							return <li style={issueListItemStyle} key={issueOrPull.number}>
 							{issueOrPull.isPull  ? (
 								<PullIcon
 								fontSize={"14"}
@@ -97,8 +128,10 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 								style={{ marginLeft: 2, ...iconStyle }}
 								color={"gray"}
 								/>
-								</a>
-						</li>)}
+							</a>
+							<span className={'relative-time'}>{timeAgo(issueOrPull.createdAt)}</span>
+						</li>
+						})}
 						</ul>
 					</td>
 				})}
