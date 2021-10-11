@@ -1,4 +1,4 @@
-import { TransformedResp } from 'api/github'
+import { TransformedResp, IssueOrPull } from 'api/github'
 import React, { useState, useEffect } from 'react'
 // @ts-ignore
 import PullIcon from "react-ionicons/lib/MdGitPullRequest";
@@ -6,6 +6,14 @@ import PullIcon from "react-ionicons/lib/MdGitPullRequest";
 import IssueIcon from "react-ionicons/lib/MdInformationCircle";
 // @ts-ignore
 import ExternalIcon from "react-ionicons/lib/MdOpen";
+
+import {IssueCard} from './issue-card'
+
+import dayjs from 'dayjs';
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+
 
 type Props = {
 	repositories: TransformedResp['repositories'];
@@ -28,38 +36,8 @@ const iconStyle: React.CSSProperties = {
 
 type GitHubLabelMatrix = Record<string, Record<string, (TransformedResp['repositories'][number]['issues'][number] | TransformedResp['repositories'][number]['pullRequests'][number])[]>>
 
-const timeAgo = (createdAt: string) => {
-	const from = new Date(createdAt).getTime() / 1000
-	const into = new Date().getTime() / 1000
-	const diff = into - from
-	let value
-	let unit
-	if(diff < 60) {
-		value = Math.round(diff)
-		unit = 'sec.'
-	} else if (diff < 60 * 60) {
-		value = Math.round(diff / 60)
-		unit = 'min.'
-	} else if (diff < 60 * 60 * 24) {
-		value = Math.round(diff / 60 / 60)
-		unit = value === 1 ? 'hour' : 'hours'
-	} else if (diff < 60 * 60 * 24 * 7) {
-		value = Math.round(diff / 60 / 60 / 24)
-		unit = value === 1 ? 'day' : 'days'
-	} else if (diff < 60 * 60 * 24 * 7 * 4) {
-		value = Math.round(diff / 60 / 60 / 24 / 7)
-		unit = value === 1 ? 'week' : 'weeks'
-	} else if (diff < 60 * 60 * 24 * 365) {
-		value = Math.round(diff / 60 / 60 / 24 / 30)
-		unit = value === 1 ? 'month' : 'months'
-	} else {
-		value = Math.ceil(diff / 60 / 60 / 24 / 365)
-		unit = value === 1 ? 'year' : 'years'
-	}
-	return `${value} ${unit} ago`
-}
-
 export const LabelMatrix: React.FC<Props> = (props) => {
+	const [featuredIssue, setFeaturedIssue] = useState<IssueOrPull | null>(null)
 	const { repositories, colIdentifier, rowIdentifier } = props
 	const [matrix, setMatrix] = useState<GitHubLabelMatrix | null>(null)
 
@@ -95,7 +73,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 
 	// TODO: key: value で選択できるように一般化
 	return <section className="label-matrix-container">
-	<h2>Priority Matrix</h2>
+		<h2>Priority Matrix</h2>
 	<table className={'label-matrix-table'}>
 		<tbody>
 		{
@@ -106,7 +84,12 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 					return <td className="label-matrix-col" key={`${impact}/${time}`}>
 						<ul style={issueListStyle}>
 						{issueOrPulls.map(issueOrPull => {
-							return <li style={issueListItemStyle} key={issueOrPull.number}>
+							return <li
+								style={issueListItemStyle}
+								key={issueOrPull.number}
+								onMouseEnter={() => { setFeaturedIssue(issueOrPull) }}
+								onMouseLeave={() => setFeaturedIssue(null)}
+							>
 							{issueOrPull.isPull  ? (
 								<PullIcon
 								fontSize={"14"}
@@ -118,7 +101,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 								fontSize={"14"}
 								style={{ marginRight: 2, ...iconStyle }}
 								color={"gray"}
-/>
+							/>
 							)}
 							{issueOrPull.isDraft && <span className="draft-label">{"draft"}</span>}
 							<a href={issueOrPull.url}>
@@ -129,7 +112,8 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 								color={"gray"}
 								/>
 							</a>
-							<span className={'relative-time'}>{timeAgo(issueOrPull.createdAt)}</span>
+							<span className={'relative-time'}>{dayjs(issueOrPull.updatedAt).fromNow()}</span>
+							{issueOrPull === featuredIssue && <IssueCard issueOrPull={featuredIssue}></IssueCard>}
 						</li>
 						})}
 						</ul>
@@ -146,7 +130,8 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 			<th className="label-matrix-col">Time: short</th>
 		</tr>
 		</tfoot>
-	</table></section>
+		</table>
+	</section>
 }
 
 export default LabelMatrix

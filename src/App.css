@@ -31,7 +31,7 @@ a:hover {
 
 .status {
   color: white;
-  font-size: .6em;
+  font-size: 0.6em;
   margin-left: 1em;
 }
 .refetch {
@@ -180,20 +180,21 @@ a.new-issue {
   font-size: 12px;
 }
 
-tr>th:first-child {
-  border-right: 1px solid #e74230; 
+tr > th:first-child {
+  border-right: 1px solid #e74230;
 }
 
-tbody>tr:not(:last-child) {
-  border-bottom: 1px dashed #e74230; 
+tbody > tr:not(:last-child) {
+  border-bottom: 1px dashed #e74230;
 }
 
 tfoot tr {
   border-top: 1px solid #e74230;
 }
 
-td:not(:last-child), th:not(:last-child) {
-  border-right: 1px dashed #e74230; 
+td:not(:last-child),
+th:not(:last-child) {
+  border-right: 1px dashed #e74230;
 }
 
 th.label-matrix-col {
@@ -207,6 +208,16 @@ th.label-matrix-col {
 
 .relative-time {
   margin-left: 2px;
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: bold;
+}
+
+.label-matrix-issue-card {
+  position: absolute;
+  width: 500px;
+  border: 1px solid gray;
+  border-radius: 8px;
+  padding: 1em;
+  background-color: #fff;
+  z-index: 9999999;
 }

@@ -7,12 +7,12 @@ const graphqlEndpoint = "https://api.github.com/graphql"
 const getHeader = (accessToken: string) =>
   accessToken
     ? {
-        Accept: "application/vnd.github.v3+json",
-        Authorization: `token ${accessToken}`,
-      }
+      Accept: "application/vnd.github.v3+json",
+      Authorization: `token ${accessToken}`,
+    }
     : {
-        Accept: "application/vnd.github.v3+json",
-      };
+      Accept: "application/vnd.github.v3+json",
+    };
 
 const githubResourceMapping = {
   repository: ({
@@ -23,14 +23,14 @@ const githubResourceMapping = {
     private: isPrivate,
     open_issues_count: openIssuesCount,
   }: any) =>
-    (({
-      assignees,
-      isArchived,
-      name,
-      updatedAt,
-      isPrivate,
-      openIssuesCount,
-    } as unknown) as Geolonia.Repository),
+  (({
+    assignees,
+    isArchived,
+    name,
+    updatedAt,
+    isPrivate,
+    openIssuesCount,
+  } as unknown) as Geolonia.Repository),
 
   issue: ({
     assignees,
@@ -78,7 +78,7 @@ const githubPagenation = async function (
       headers,
       cache: "no-store",
     }).then((res) => {
-      if(res.status > 399) { throw new Error(`Error with status ${res.status}`) }
+      if (res.status > 399) { throw new Error(`Error with status ${res.status}`) }
       const linkHeader = res.headers.get("Link");
       let nextUrl = "";
       if (linkHeader) {
@@ -205,8 +205,10 @@ export type TransformedResp = {
   }[]
 }
 
+export type IssueOrPull = TransformedResp['repositories'][0]['issues'][0] | TransformedResp['repositories'][0]['pullRequests'][0]
+
 export const listRepositories2 = async (org: string, token: string, nextCursor?: string) => {
-  const after =  nextCursor ? ` after: "${nextCursor}", `: ''
+  const after = nextCursor ? ` after: "${nextCursor}", ` : ''
   const resp = await fetch(graphqlEndpoint, {
     method: 'POST',
     headers: getHeader(token),
@@ -294,21 +296,21 @@ query {
   console.log(search.edges.map(edge => edge.node.name))
   const transformedResp: TransformedResp = {
     info: search.pageInfo,
-    repositories: search.edges.map(({node: repo}) => ({
+    repositories: search.edges.map(({ node: repo }) => ({
       ...repo,
-      issues: repo.issues.edges.map(({node: issue}) => ({
+      issues: repo.issues.edges.map(({ node: issue }) => ({
         ...issue,
         isDraft: undefined,
         isPull: undefined,
-        labels: issue.labels.edges.map(({node: label}) => label),
-        assignees: issue.assignees.edges.map(({node: assignee}) => assignee),
+        labels: issue.labels.edges.map(({ node: label }) => label),
+        assignees: issue.assignees.edges.map(({ node: assignee }) => assignee),
       })),
-      pullRequests: repo.pullRequests.edges.map(({node: pullRequest}) => ({
+      pullRequests: repo.pullRequests.edges.map(({ node: pullRequest }) => ({
         ...pullRequest,
         isPull: true,
-        labels: pullRequest.labels.edges.map(({node: label}) => label),
-        assignees: pullRequest.assignees.edges.map(({node: assignee}) => assignee),
-      })),     
+        labels: pullRequest.labels.edges.map(({ node: label }) => label),
+        assignees: pullRequest.assignees.edges.map(({ node: assignee }) => assignee),
+      })),
     }))
   }
   return transformedResp
