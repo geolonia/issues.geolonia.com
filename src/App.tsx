@@ -11,24 +11,25 @@ const ORGANIZATION_NAME = "geolonia";
 
 const LOCAL_STORAGE_PERSISTED_STATE_KEY = 'issues.geolonia.com/sidebarVisibility'
 
-const closeButtonStyle: React.CSSProperties = {
-  width: '36px',
-  height: '36px',
-  position: 'absolute',
-  top: '60px',
-  left: '340px',
-  display: 'block',
-  zIndex: 9999,
-  cursor: 'pointer',
-  textDecoration: 'none',
-  border: 'none',
-  padding: 0,
-  background: 'none',
-};
+// const closeButtonStyle: React.CSSProperties = {
+//   width: '36px',
+//   height: '36px',
+//   position: 'absolute',
+//   top: '60px',
+//   left: '340px',
+//   display: 'block',
+//   zIndex: 9999,
+//   cursor: 'pointer',
+//   textDecoration: 'none',
+//   border: 'none',
+//   padding: 0,
+//   background: 'none',
+// };
 
 function App() {
 
-  const [sidebarVisibility, setSidebarVisibility] = useState(localStorage.getItem(LOCAL_STORAGE_PERSISTED_STATE_KEY) === 'false' ? false : true)
+  // TODO: toggle sidebar
+  const [sidebarVisibility] = useState(localStorage.getItem(LOCAL_STORAGE_PERSISTED_STATE_KEY) === 'false' ? false : true)
 
   const {
     accessToken,
@@ -42,9 +43,9 @@ function App() {
     accessToken
   );
 
-  const handleClose = useCallback(() => {
-    setSidebarVisibility(false);
-  }, []);
+  // const handleClose = useCallback(() => {
+  //   setSidebarVisibility(false);
+  // }, []);
 
 useEffect(() => {
   clearError()
