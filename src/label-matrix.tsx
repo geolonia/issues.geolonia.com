@@ -69,7 +69,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 	<table className={'label-matrix-table'}>
 		<tbody>
 		{
-			['urgent', 'large', 'middle', 'small'].map(impact => <tr className="label-matrix-row" key={impact}>
+			['large', 'middle', 'small'].map(impact => <tr className="label-matrix-row" key={impact}>
 				<th className="label-matrix-col">Impact: {impact}</th>
 				{['long', 'middle', 'short'].map(time => {
 					const issueOrPulls = (matrix[impact] || {})[time] || []
