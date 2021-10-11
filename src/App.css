@@ -229,3 +229,16 @@ th.label-matrix-col {
   background-color: #fff;
   z-index: 9999999;
 }
+
+dl.assignees-list dt {
+  display: inline;
+  font-weight: bold;
+}
+dl.assignees-list dt::after {
+  content: ":";
+}
+
+dl.assignees-list dd {
+  display: inline;
+  margin-left: 0.5em;
+}

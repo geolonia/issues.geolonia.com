@@ -22,14 +22,6 @@ const iconStyle: React.CSSProperties = {
   top: 3,
 };
 
-const assigneeListStyle: React.CSSProperties = {
-  padding: 0,
-}
-
-const assigneeListItemStyle: React.CSSProperties = {
-  listStyle: 'none',
-}
-
 export const IssueCard: React.FC<Props> = (props) => {
 	const { issueOrPull: {isPull, isDraft, url, title, number, updatedAt, assignees, labels} } = props
 	return <div className={'label-matrix-issue-card'}>
@@ -60,11 +52,11 @@ export const IssueCard: React.FC<Props> = (props) => {
       {/* <p><small>{repoIdentifier}</small></p> */}
       <p>{dayjs(updatedAt).fromNow()}</p>
       {
-        assignees.length > 0 && <ul style={assigneeListStyle}>
-          {assignees.map(assignee => <li key={assignee.login} style={assigneeListItemStyle}>
-            {assignee.login}
-          </li>)}
-        </ul>
+        assignees.length > 0 &&
+        <dl className={'assignees-list'}>
+            <dt>{'assignees'}</dt>
+            <dd>{assignees.map(assignee => assignee.login).join(' ,')}</dd>
+        </dl>
       }
       <ul className="label-list">
         {labels.map((label) => (
