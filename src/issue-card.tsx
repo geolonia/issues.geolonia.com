@@ -49,8 +49,10 @@ export const IssueCard: React.FC<Props> = (props) => {
           />
         </a>
       </h4>
-      {/* <p><small>{repoIdentifier}</small></p> */}
-      <p>{dayjs(updatedAt).fromNow()}</p>
+      <dl className={'assignees-list'}>
+            <dt>{'updated'}</dt>
+            <dd>{dayjs(updatedAt).fromNow()}</dd>
+      </dl>
       {
         assignees.length > 0 &&
         <dl className={'assignees-list'}>

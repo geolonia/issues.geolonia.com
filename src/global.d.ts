@@ -14,6 +14,7 @@ declare namespace Geolonia {
     labels: Label[];
     state: "open" | "close";
     body: string;
+    createdAt: string;
     updatedAt: string;
     number: number;
     type: "issue";
@@ -27,6 +28,7 @@ declare namespace Geolonia {
     labels: Label[];
     state: "open" | "close";
     body: string;
+    createdAt: string;
     updatedAt: string;
     number: number;
     type: "pull";
