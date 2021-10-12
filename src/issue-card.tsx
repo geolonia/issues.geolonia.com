@@ -23,7 +23,7 @@ const iconStyle: React.CSSProperties = {
 };
 
 export const IssueCard: React.FC<Props> = (props) => {
-	const { issueOrPull: {isPull, isDraft, url, title, number, updatedAt, assignees, labels} } = props
+	const { issueOrPull: {isPull, isDraft, url, title, number, updatedAt, createdAt, assignees, labels} } = props
 	return <div className={'label-matrix-issue-card'}>
 		<h4 className="issue-title">
 		{isPull ? (
@@ -51,7 +51,11 @@ export const IssueCard: React.FC<Props> = (props) => {
       </h4>
       <dl className={'assignees-list'}>
             <dt>{'updated'}</dt>
-            <dd>{dayjs(updatedAt).fromNow()}</dd>
+            <dd>{dayjs(updatedAt).fromNow()} ({dayjs(updatedAt).format('YYYY-MM-DD')})</dd>
+      </dl>
+      <dl className={'assignees-list'}>
+            <dt>{'created'}</dt>
+            <dd>{dayjs(createdAt).fromNow()} ({dayjs(createdAt).format('YYYY-MM-DD')})</dd>
       </dl>
       {
         assignees.length > 0 &&

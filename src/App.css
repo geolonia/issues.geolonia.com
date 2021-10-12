@@ -230,6 +230,10 @@ th.label-matrix-col {
   z-index: 9999999;
 }
 
+dl.assignees-list {
+  margin: 0.5em;
+}
+
 dl.assignees-list dt {
   display: inline;
   font-weight: bold;
