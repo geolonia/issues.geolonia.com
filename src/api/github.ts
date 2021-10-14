@@ -184,10 +184,10 @@ export type TransformedResp = {
       title: string;
       number: number;
       url: string;
-      isDraft: undefined;
+      isDraft: boolean;
       updatedAt: string;
       createdAt: string;
-      isPull: undefined,
+      isPull: boolean,
       labels: FlattenNode<Label>[];
       assignees: FlattenNode<Assignee>[]
     }[];
@@ -198,7 +198,7 @@ export type TransformedResp = {
       isDraft: boolean;
       updatedAt: string;
       createdAt: string;
-      isPull: true;
+      isPull: boolean;
       labels: FlattenNode<Label>[];
       assignees: FlattenNode<Assignee>[];
     }[]
@@ -207,7 +207,109 @@ export type TransformedResp = {
 
 export type IssueOrPull = TransformedResp['repositories'][0]['issues'][0] | TransformedResp['repositories'][0]['pullRequests'][0]
 
-export const listRepositories2 = async (org: string, token: string, nextCursor?: string) => {
+export const listRepositories = async (org: string, token: string) => {
+  const url: string = `${apiEndpoint}/orgs/${org}/repos`;
+  const data = await githubPagenation(url, getHeader(token));
+  return data.map(githubResourceMapping.repository);
+};
+
+const graphql_on_repository = `{
+  name
+  url
+  isPrivate
+  issues (first: 100, states: [OPEN]) {
+    edges {
+      node {
+        title
+        number
+        url
+        updatedAt
+        createdAt
+        labels(first: 50) {
+          edges {
+            node {
+              name
+              color
+              description
+            }
+          }
+        }
+        assignees(first: 5) {
+          edges {
+            node {
+              login
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+  pullRequests(first: 30, states: [OPEN]) {
+    edges {
+      node {
+        title
+        isDraft
+        number
+        url
+        updatedAt
+        createdAt
+        labels(first: 50) {
+          edges {
+            node {
+              name
+              color
+              description
+            }
+          }
+        }
+        assignees(first: 5) {
+          edges {
+            node {
+              login
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}`
+
+export const getRepositoryWithGraphql = async (org: string, name: string, token: string) => {
+  const resp = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: getHeader(token),
+    body: JSON.stringify({
+      // TODO: use variables
+      query: `
+query { 
+  repository (owner: "${org}", name: "${name}") ${graphql_on_repository}
+}`
+    })
+  } as any)
+  const data = await resp.json() as any
+  const repo = data.data.repository as GraphQLResp['data']['search']['edges'][0]['node']
+  return {
+    ...repo,
+    issues: repo.issues.edges.map(({ node: issue }) => ({
+      ...issue,
+      isDraft: false,
+      isPull: false,
+      labels: issue.labels.edges.map(({ node: label }) => label),
+      assignees: issue.assignees.edges.map(({ node: assignee }) => assignee),
+    })),
+    pullRequests: repo.pullRequests.edges.map(({ node: pullRequest }) => ({
+      ...pullRequest,
+      isPull: true,
+      labels: pullRequest.labels.edges.map(({ node: label }) => label),
+      assignees: pullRequest.assignees.edges.map(({ node: assignee }) => assignee),
+    })),
+  }
+}
+
+// graphQL
+export const listRepositoriesWithGraphql = async (org: string, token: string, nextCursor?: string) => {
   const after = nextCursor ? ` after: "${nextCursor}", ` : ''
   const resp = await fetch(graphqlEndpoint, {
     method: 'POST',
@@ -224,68 +326,7 @@ query {
     }
     edges {
       node {
-        ... on Repository {
-          name
-          url
-          isPrivate
-          issues (first: 100, states: [OPEN]) {
-            edges {
-              node {
-                title
-                number
-                url
-                updatedAt
-                createdAt
-                labels(first: 50) {
-                  edges {
-                    node {
-                      name
-                      color
-                      description
-                    }
-                  }
-                }
-                assignees(first: 5) {
-                  edges {
-                    node {
-                      login
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-          pullRequests(first: 30, states: [OPEN]) {
-            edges {
-              node {
-                title
-                isDraft
-                number
-                url
-                updatedAt
-                createdAt
-                labels(first: 50) {
-                  edges {
-                    node {
-                      name
-                      color
-                      description
-                    }
-                  }
-                }
-                assignees(first: 5) {
-                  edges {
-                    node {
-                      login
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        ... on Repository ${graphql_on_repository}
       }
     }
   }
@@ -293,15 +334,14 @@ query {
     })
   } as any)
   const { data: { search } } = (await resp.json()) as unknown as GraphQLResp
-  console.log(search.edges.map(edge => edge.node.name))
   const transformedResp: TransformedResp = {
     info: search.pageInfo,
     repositories: search.edges.map(({ node: repo }) => ({
       ...repo,
       issues: repo.issues.edges.map(({ node: issue }) => ({
         ...issue,
-        isDraft: undefined,
-        isPull: undefined,
+        isDraft: false,
+        isPull: false,
         labels: issue.labels.edges.map(({ node: label }) => label),
         assignees: issue.assignees.edges.map(({ node: assignee }) => assignee),
       })),

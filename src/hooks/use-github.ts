@@ -4,15 +4,19 @@ import {
   listIssues,
   listLabeledIssues,
   describePull,
-  listRepositories2,
+  listRepositoriesWithGraphql,
+  listRepositories,
+  getRepositoryWithGraphql,
 } from "../api/github";
 
 const LOCAL_STORAGE_PERSISTED_STATE_KEY = 'issues.geolonia.com/repositories'
 
+type Repositories = TransformedResp['repositories']
+
 export const useRepositories = (org: string, accessToken: string) => {
   const [loading, setLoading] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
-  const [repositories, setRepositories] = useState<TransformedResp['repositories']>(() => {
+  const [repositories, setRepositories] = useState<Repositories>(() => {
     const persisted = localStorage.getItem(LOCAL_STORAGE_PERSISTED_STATE_KEY)
     if(persisted) {
       try {
@@ -31,14 +35,22 @@ export const useRepositories = (org: string, accessToken: string) => {
     if(repositories.length === 0) {
       (async () => {
         setLoading(true);
+
+        // GraphQL
         let nextCursor = undefined
-        let fetchedRepositories = []
+        let fetchedRepositories: Repositories = []
         do {
           try {
             // @ts-ignore
-          const { info, repositories: currentlyFetchedRepositories } = await listRepositories2(org, accessToken, nextCursor)
+          const { info, repositories: currentlyFetchedRepositories } = await listRepositoriesWithGraphql(org, accessToken, nextCursor)
           fetchedRepositories.push(...currentlyFetchedRepositories)
-          setRepositories([...repositories, ...fetchedRepositories])
+          fetchedRepositories = fetchedRepositories.reduce<Repositories>((prev, item) => {
+            if(!prev.find(repository => repository.name === item.name)) {
+              prev.push(item)
+            }
+            return prev
+          }, [])
+          setRepositories(fetchedRepositories)
           nextCursor = info.hasNextPage ? info.endCursor : null 
           } catch (error) {
             setError(error)
@@ -47,6 +59,33 @@ export const useRepositories = (org: string, accessToken: string) => {
             return
           }
         } while (nextCursor);
+
+        // List repositories fallback
+        // https://github.com/geolonia/issues.geolonia.com/issues/15
+        const listedRepositoryNamesWithGraphql = fetchedRepositories.map(repository => repository.name)
+        try {
+          const listedRepositoriesWithRest = (await listRepositories(org, accessToken)).map(repository => ({ name: repository.name, isArchived: repository.isArchived }))
+          const lackedRepositoryNamesWithGraphql = listedRepositoriesWithRest
+            .filter(listedRepositoryWithRest => {
+              return (
+                !listedRepositoryWithRest.isArchived &&
+                listedRepositoryNamesWithGraphql.indexOf(listedRepositoryWithRest.name) === -1
+              )
+            })
+            .map(repository => repository.name)
+            console.log(lackedRepositoryNamesWithGraphql)
+            const fetchedLackedRepositories = await Promise.all(lackedRepositoryNamesWithGraphql.map(name => getRepositoryWithGraphql(org, name, accessToken)))
+            fetchedRepositories.push(...fetchedLackedRepositories)
+            setRepositories(fetchedRepositories)
+
+          } catch (error) {
+          console.log(error)
+          setError(error)
+          setLoading(false)
+          setIsFetched(true)
+          return
+        }
+
         setLoading(false);
         setIsFetched(true);
       })()
