@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from "react-router-dom";
 import { IssueOrPull } from 'api/github'
 // @ts-ignore
@@ -23,8 +23,13 @@ const iconStyle: React.CSSProperties = {
 };
 
 export const IssueCard: React.FC<Props> = (props) => {
-	const { issueOrPull: {isPull, isDraft, url, title, number, updatedAt, createdAt, assignees, labels} } = props
-	return <div className={'label-matrix-issue-card'}>
+	const { issueOrPull: {isPull, isDraft, url, title, bodyText, number, updatedAt, createdAt, assignees, labels} } = props
+	
+  const bodyTextLines = useMemo(() => (bodyText || '' /* fallback for prev version */)
+    .split('\n')
+    .map((line, index) => ({ line, key: index })), [bodyText])
+
+  return <div className={'label-matrix-issue-card'}>
 		<h4 className="issue-title">
 		{isPull ? (
 		<PullIcon
@@ -64,6 +69,9 @@ export const IssueCard: React.FC<Props> = (props) => {
             <dd>{assignees.map(assignee => assignee.login).join(' ,')}</dd>
         </dl>
       }
+      {bodyTextLines.length > 0 && <p>
+        {bodyTextLines.map(({line, key}) => <>{line}<br /></>)}
+        </p>}
       <ul className="label-list">
         {labels.map((label) => (
           <li

@@ -116,6 +116,7 @@ type Assignee = {
 type Issue = {
   node: {
     title: string;
+    bodyText: string;
     number: number;
     url: string;
     updatedAt: string;
@@ -131,6 +132,7 @@ type Issue = {
 type PullRequest = {
   node: {
     title: string;
+    bodyText: string;
     number: number;
     url: string;
     isDraft: boolean;
@@ -182,6 +184,7 @@ export type TransformedResp = {
     isPrivate: boolean;
     issues: {
       title: string;
+      bodyText: string;
       number: number;
       url: string;
       isDraft: boolean;
@@ -193,6 +196,7 @@ export type TransformedResp = {
     }[];
     pullRequests: {
       title: string;
+      bodyText: string;
       number: number;
       url: string;
       isDraft: boolean;
@@ -221,6 +225,7 @@ const graphql_on_repository = `{
     edges {
       node {
         title
+        bodyText
         number
         url
         updatedAt
@@ -249,6 +254,7 @@ const graphql_on_repository = `{
     edges {
       node {
         title
+        bodyText
         isDraft
         number
         url
