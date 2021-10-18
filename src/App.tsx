@@ -136,10 +136,11 @@ useEffect(() => {
           <li>
             <a
               href={`https://github.com/${ORGANIZATION_NAME}`}
+              target="_blank" rel="noopener noreferrer"
             >{`${ORGANIZATION_NAME} on GitHub`}</a>
           </li>
           <li>
-            <a href="https://github.com/geolonia/issues.geolonia.com">
+            <a href="https://github.com/geolonia/issues.geolonia.com"  target="_blank" rel="noopener noreferrer">
               @geolonia/issues.geolonia.com on GitHub
             </a>
           </li>

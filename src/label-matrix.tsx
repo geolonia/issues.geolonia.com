@@ -117,7 +117,7 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 								{priorityLabel.name}
 								</span>
 							</span>}
-							<a href={issueOrPull.url}>
+							<a href={issueOrPull.url} target="_blank" rel="noopener noreferrer">
 								{`${issueOrPull.title} #${issueOrPull.number}`}
 								<ExternalIcon
 								fontSize={"14"}

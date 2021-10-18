@@ -45,7 +45,7 @@ export const IssueCard: React.FC<Props> = (props) => {
 		/>
 		) }
         {isDraft && <span className="draft-label">{"draft"}</span>}
-        <a href={url}>
+        <a href={url} target="_blank" rel="noopener noreferrer">
           {`${title} #${number}`}
           <ExternalIcon
             fontSize={"14"}

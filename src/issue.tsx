@@ -58,7 +58,7 @@ function Issue(props: Props) {
           />
         )}
         {isDraft && <span className="draft-label">{"draft"}</span>}
-        <a href={issue.htmlUrl}>
+        <a href={issue.htmlUrl} target="_blank" rel="noopener noreferrer">
           {`${title} #${num}`}
           <ExternalIcon
             fontSize={"14"}

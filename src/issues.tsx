@@ -15,7 +15,7 @@ function Issues(props: Props) {
   return (
     <div className="issues">
       <h3 className="repository-name">
-        <a href={htmlUrl}>
+        <a href={htmlUrl} target="_blank" rel="noopener noreferrer">
           {decodeURIComponent(name)}
           {!loading && issues.length > 0 && <small>{`(${issues.length})`}</small>}
           <ExternalIcon
