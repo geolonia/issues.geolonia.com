@@ -126,7 +126,9 @@ export const LabelMatrix: React.FC<Props> = (props) => {
 								/>
 							</a>
 							<span className={'relative-time'}>{dayjs(issueOrPull.updatedAt).fromNow()}</span>
-							{issueOrPull === featuredIssue && <IssueCard issueOrPull={featuredIssue}></IssueCard>}
+								{issueOrPull === featuredIssue && <IssueCard
+									issueOrPull={featuredIssue}
+								/>}
 						</li>
 						})}
 						</ul>

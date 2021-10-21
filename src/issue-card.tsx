@@ -14,7 +14,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 type Props = {
-	issueOrPull: IssueOrPull
+  issueOrPull: IssueOrPull,
 }
 
 const iconStyle: React.CSSProperties = {
@@ -23,8 +23,12 @@ const iconStyle: React.CSSProperties = {
 };
 
 export const IssueCard: React.FC<Props> = (props) => {
-	const { issueOrPull: {isPull, isDraft, url, title, bodyText, number, updatedAt, createdAt, assignees, labels} } = props
-	
+  const {
+    issueOrPull: { isPull, isDraft, url, title, bodyText, number, updatedAt, createdAt, assignees, labels },
+  } = props
+  const match = url.match(/^https:\/\/github.com\/(.*)\/(.*)\/(issues|pulls)\/[0-9]*/)
+  const reponame = match ? `${match[1]}/${match[2]}` : ''
+
   const bodyTextLines = useMemo(() => (bodyText || '' /* fallback for prev version */)
     .split('\n')
     .map((line, index) => ({ line, key: index })), [bodyText])
@@ -53,7 +57,9 @@ export const IssueCard: React.FC<Props> = (props) => {
             color={"gray"}
           />
         </a>
+        <strong style={{marginLeft: '.5em'}}>{reponame}</strong>
       </h4>
+
       <dl className={'assignees-list'}>
             <dt>{'updated'}</dt>
             <dd>{dayjs(updatedAt).fromNow()} ({dayjs(updatedAt).format('YYYY-MM-DD')})</dd>
